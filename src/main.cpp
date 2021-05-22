@@ -8,39 +8,6 @@
 #include <Z21.h>
 #include <ArduinoOTA.h>
 
-/*
- *  Ecran   |   ESP32
- *  GND     =>  GND
- *  VCC     =>  3.3V
- *  SCL     =>  D18
- *  SDA     =>  D23
- *  RES     =>  D22
- *  DC      =>  D21
- *              19 est utilisé par la librairie de l'écran mais pas connectée physiquement
- *  - 25 : DT codeur
- *  - 26 : CLK codeur
- *  - 27 : SW codeur
- *  - 16 : Sélection machine
- *  - 17 : OK
- *  - 13 : Sélection aiguillage
- *  - 14 : Sélection rotonde
- *  - 15 : Sélection fonction
- *              
- *  Voir le fichier User_Setup.h situé dans la librairie pour la configuration
- *  
- *  TO DO :
- *  - remplacer la sélection machine (et aiguillage) par une liste défilante (widget roller?)
- *  - intégrer les écrans que j'avais dessiné :
- *    - aiguillage un par un
- *    - rotonde
- *    - fonctions
- *  - ajouter une base de donnée de numéro/nom machine
- *  - ajouter la gestions des boutons avec les registres à décalage
-
- *  - ajouter des fonctions à la Z21
- *  - récupérer l'état de la Z21 (arrêt d'urgence, reset arrêt d'urgence, court-circuit)
- */
-
 #define BT_STOP               27
 #define BT_SELECT_MACHINE     16
 #define BT_OK                 17
@@ -124,6 +91,7 @@ lv_obj_t * speedLabel;
 lv_obj_t * machineNumLabel;
 lv_obj_t * machineNumLabelMoins;
 lv_obj_t * machineNumLabelPlus;
+lv_obj_t * rollerMachine;
 lv_obj_t * ecranAcceuil;
 lv_obj_t * ecranVitesse;
 lv_obj_t * ecranMachine;
@@ -248,6 +216,25 @@ void majEcran(){
     
     // Ecran machine
     ecranMachine = lv_obj_create(NULL, NULL);
+    rollerMachine = lv_roller_create(ecranMachine, NULL);
+    lv_roller_set_options(rollerMachine,
+                        "Une machine\n"
+                        "Une autre\n"
+                        "Super train\n"
+                        "La 3000\n"
+                        "Vitesse\n"
+                        "Aller\n"
+                        "On\n"
+                        "y\n"
+                        "est\n"
+                        "presque\n"
+                        "plus\n"
+                        "que 1",
+                        LV_ROLLER_MODE_INFINITE);
+    lv_roller_set_visible_row_count(rollerMachine, 4);
+    lv_obj_align(rollerMachine, NULL, LV_ALIGN_CENTER, 0, 0);
+
+    /*
     // Label sélection numéro machine
     machineNumLabel = lv_label_create(ecranMachine, NULL);
     lv_obj_align(machineNumLabel, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -263,7 +250,7 @@ void majEcran(){
     machineNumLabelPlus = lv_label_create(ecranMachine, machineNumLabel);
     lv_obj_align(machineNumLabelPlus, machineNumLabel, LV_ALIGN_CENTER, 0, 50);
     lv_label_set_align(machineNumLabelPlus, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(machineNumLabelPlus, numMachine+1);
+    ecritValeur(machineNumLabelPlus, numMachine+1);*/
 
     // Ecran aiguillage
     ecranAiguillage = lv_obj_create(NULL, NULL);
@@ -364,9 +351,10 @@ void majEcran(){
       }
       oldPosition = newPosition;
       myZ21.SelectMachine(numMachine);
-      ecritValeur(machineNumLabel, numMachine);
+      lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
+      /*ecritValeur(machineNumLabel, numMachine);
       ecritValeur(machineNumLabelMoins, numMachine-1);
-      ecritValeur(machineNumLabelPlus, numMachine+1);
+      ecritValeur(machineNumLabelPlus, numMachine+1);*/
       /*Serial.print("Machine ");
       Serial.println(numMachine);*/
     }

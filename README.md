@@ -22,4 +22,13 @@
 
 # Prochaines étapes
 
-On ajoutera ici les prochaines étapes
+- remplacer la sélection machine (et aiguillage) par une liste défilante (widget roller?)
+    - Utiliser les KEY pour naviguer avec la fonction lv_group_send_data
+- intégrer les écrans que j'avais dessiné :
+  - aiguillage un par un
+  - rotonde
+  - fonctions
+- ajouter une base de donnée de numéro/nom machine
+- ajouter la gestions des boutons avec les registres à décalage
+- ajouter des fonctions à la Z21
+- récupérer l'état de la Z21 (arrêt d'urgence, reset arrêt d'urgence, court-circuit)
