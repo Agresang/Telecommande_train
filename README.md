@@ -3,6 +3,7 @@
 # Connexions
 
 | Ecran   |   ESP32 |
+| - | - |
 | GND     |  GND    |
 | VCC     |  3.3V   |
 | SCL     |  D18    |
