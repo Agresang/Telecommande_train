@@ -7,6 +7,8 @@
 #include <WiFiGeneric.h>
 #include <Z21.h>
 #include <ArduinoOTA.h>
+#include <SPIFFS.h>
+#include <SD.h>
 
 #define BT_STOP               27
 #define BT_SELECT_MACHINE     16
@@ -177,6 +179,10 @@ void majEcran(){
     lv_style_init(&style_small);
     lv_style_set_text_font(&style_small, LV_STATE_DEFAULT, &lv_font_montserrat_14);
     //---------------------------
+    static lv_style_t style_medium;
+    lv_style_init(&style_medium);
+    lv_style_set_text_font(&style_medium, LV_STATE_DEFAULT, &lv_font_montserrat_26);
+    //---------------------------
     static lv_style_t style_big;
     lv_style_init(&style_big);
     lv_style_set_text_font(&style_big, LV_STATE_DEFAULT, &lv_font_montserrat_30);
@@ -217,40 +223,29 @@ void majEcran(){
     // Ecran machine
     ecranMachine = lv_obj_create(NULL, NULL);
     rollerMachine = lv_roller_create(ecranMachine, NULL);
+    lv_obj_add_style(rollerMachine, LV_OBJ_PART_MAIN, &style_medium);
+    if(!SPIFFS.begin(true)){
+      Serial.println("An Error has occurred while mounting SPIFFS");
+      return;
+    }
+    File file = SPIFFS.open("/Machines.txt");
+    if(!file){
+      Serial.println("Failed to open file for reading");
+      return;
+    }
+    char listMachines[1024];
+    int fileLength = file.available();
+    for(int i=0; i<fileLength; i++){
+      char lettre = file.read();
+      strncat(listMachines, &lettre, 1);
+    }
+    file.close();
+    //Serial.println(listMachines);
     lv_roller_set_options(rollerMachine,
-                        "Une machine\n"
-                        "Une autre\n"
-                        "Super train\n"
-                        "La 3000\n"
-                        "Vitesse\n"
-                        "Aller\n"
-                        "On\n"
-                        "y\n"
-                        "est\n"
-                        "presque\n"
-                        "plus\n"
-                        "que 1",
-                        LV_ROLLER_MODE_INFINITE);
+                        listMachines,
+                        LV_ROLLER_MODE_NORMAL);
     lv_roller_set_visible_row_count(rollerMachine, 4);
     lv_obj_align(rollerMachine, NULL, LV_ALIGN_CENTER, 0, 0);
-
-    /*
-    // Label sélection numéro machine
-    machineNumLabel = lv_label_create(ecranMachine, NULL);
-    lv_obj_align(machineNumLabel, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_align(machineNumLabel, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(machineNumLabel, numMachine);
-    lv_obj_add_style(machineNumLabel, LV_OBJ_PART_MAIN, &style_big);
-    // Label visualisation numéro machine -1
-    machineNumLabelMoins = lv_label_create(ecranMachine, machineNumLabel);
-    lv_obj_align(machineNumLabelMoins, machineNumLabel, LV_ALIGN_CENTER, 0, -50);
-    lv_label_set_align(machineNumLabelMoins, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(machineNumLabelMoins, numMachine-1);
-    // Label visualisation numéro machine +1
-    machineNumLabelPlus = lv_label_create(ecranMachine, machineNumLabel);
-    lv_obj_align(machineNumLabelPlus, machineNumLabel, LV_ALIGN_CENTER, 0, 50);
-    lv_label_set_align(machineNumLabelPlus, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(machineNumLabelPlus, numMachine+1);*/
 
     // Ecran aiguillage
     ecranAiguillage = lv_obj_create(NULL, NULL);
@@ -332,6 +327,7 @@ void majEcran(){
   } else if(etatEcran == 20){
     // Initialisation de l'écran changement de machine
     lv_scr_load(ecranMachine);
+    lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
     encoder.setCount(0);
     oldPosition = 0;
     
@@ -352,9 +348,6 @@ void majEcran(){
       oldPosition = newPosition;
       myZ21.SelectMachine(numMachine);
       lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
-      /*ecritValeur(machineNumLabel, numMachine);
-      ecritValeur(machineNumLabelMoins, numMachine-1);
-      ecritValeur(machineNumLabelPlus, numMachine+1);*/
       /*Serial.print("Machine ");
       Serial.println(numMachine);*/
     }
