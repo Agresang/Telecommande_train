@@ -90,17 +90,13 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 // Variables globales affichage
 lv_obj_t * gauge1;
 lv_obj_t * speedLabel;
-lv_obj_t * machineNumLabel;
-lv_obj_t * machineNumLabelMoins;
-lv_obj_t * machineNumLabelPlus;
+lv_obj_t * machineNameLabel;
 lv_obj_t * rollerMachine;
 lv_obj_t * ecranAcceuil;
 lv_obj_t * ecranVitesse;
 lv_obj_t * ecranMachine;
 lv_obj_t * ecranAiguillage;
-lv_obj_t * aiguillageNumLabel;
-lv_obj_t * aiguillageNumLabelMoins;
-lv_obj_t * aiguillageNumLabelPlus;
+lv_obj_t * rollerAiguillage;
 lv_obj_t * aiguillagePosDroit;
 lv_obj_t * aiguillagePosDevie;
 lv_obj_t * mbox;
@@ -219,6 +215,12 @@ void majEcran(){
     lv_label_set_align(speedLabel, LV_LABEL_ALIGN_CENTER);
     lv_label_set_text(speedLabel, "0");
     lv_obj_add_style(speedLabel, LV_OBJ_PART_MAIN, &style_big);
+    // Label nom de machine
+    machineNameLabel = lv_label_create(ecranVitesse, NULL);
+    lv_obj_align(machineNameLabel, ecranVitesse, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    lv_label_set_text(machineNameLabel, "-");
+    lv_obj_add_style(machineNameLabel, LV_OBJ_PART_MAIN, &style_medium);
+    lv_label_set_align(machineNameLabel, LV_LABEL_ALIGN_CENTER);
     
     // Ecran machine
     ecranMachine = lv_obj_create(NULL, NULL);
@@ -233,7 +235,7 @@ void majEcran(){
       Serial.println("Failed to open file for reading");
       return;
     }
-    char listMachines[1024];
+    char listMachines[1024] = "";
     int fileLength = file.available();
     for(int i=0; i<fileLength; i++){
       char lettre = file.read();
@@ -244,27 +246,29 @@ void majEcran(){
     lv_roller_set_options(rollerMachine,
                         listMachines,
                         LV_ROLLER_MODE_NORMAL);
-    lv_roller_set_visible_row_count(rollerMachine, 4);
+    lv_roller_set_visible_row_count(rollerMachine, 5);
     lv_obj_align(rollerMachine, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_roller_set_auto_fit(rollerMachine, true);
 
     // Ecran aiguillage
     ecranAiguillage = lv_obj_create(NULL, NULL);
-    // Label sélection numéro aigullage
-    aiguillageNumLabel = lv_label_create(ecranAiguillage, NULL);
-    lv_obj_align(aiguillageNumLabel, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_align(aiguillageNumLabel, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(aiguillageNumLabel, numAiguillage);
-    lv_obj_add_style(aiguillageNumLabel, LV_OBJ_PART_MAIN, &style_big);
-    // Label visualisation numéro aiguillage -1
-    aiguillageNumLabelMoins = lv_label_create(ecranAiguillage, aiguillageNumLabel);
-    lv_obj_align(aiguillageNumLabelMoins, machineNumLabel, LV_ALIGN_CENTER, 0, -50);
-    lv_label_set_align(aiguillageNumLabelMoins, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(aiguillageNumLabelMoins, numAiguillage-1);
-    // Label visualisation numéro aiguillage +1
-    aiguillageNumLabelPlus = lv_label_create(ecranAiguillage, aiguillageNumLabel);
-    lv_obj_align(aiguillageNumLabelPlus, machineNumLabel, LV_ALIGN_CENTER, 0, 50);
-    lv_label_set_align(aiguillageNumLabelPlus, LV_LABEL_ALIGN_CENTER);
-    ecritValeur(aiguillageNumLabelPlus, numAiguillage+1);
+    // Roller sélection aiguillage
+    rollerAiguillage = lv_roller_create(ecranAiguillage, NULL);
+    lv_obj_add_style(rollerAiguillage, LV_OBJ_PART_MAIN, &style_medium);
+    char listAiguillage[1024] = "0\n";
+    for(int i=1; i<50; i++){
+      char buff[16];
+      itoa(i,buff,10);
+      strncat(buff, "\n", 1);
+      strcat(listAiguillage, buff);
+    }
+    strcat(listAiguillage, "50");
+    //Serial.println(listAiguillage);
+    lv_roller_set_options(rollerAiguillage,
+                        listAiguillage,
+                        LV_ROLLER_MODE_NORMAL);
+    lv_roller_set_visible_row_count(rollerAiguillage, 4);
+    lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
     // Label position aiguillage droit
     aiguillagePosDroit = lv_led_create(ecranAiguillage, NULL);
     lv_obj_align(aiguillagePosDroit, NULL, LV_ALIGN_IN_LEFT_MID, 20, 0);
@@ -280,6 +284,12 @@ void majEcran(){
   } else if(etatEcran == 10){
     // Initialisation de l'écran vitesse
     lv_scr_load(ecranVitesse);
+    lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
+    char buff[32];
+    lv_roller_get_selected_str(rollerMachine, buff, 32);
+    lv_label_set_text(machineNameLabel, buff);
+    lv_label_set_align(machineNameLabel, LV_LABEL_ALIGN_CENTER);
+    lv_obj_align(machineNameLabel, ecranVitesse, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
     encoder.setCount(0);
     oldPosition = 0;
     myZ21.AskMachineInfo();
@@ -362,6 +372,7 @@ void majEcran(){
   } else if(etatEcran == 30){
     // Initialisation de l'écran aiguillage manuel
     lv_scr_load(ecranAiguillage);
+    lv_roller_set_selected(rollerAiguillage, numAiguillage, LV_ANIM_OFF);
     encoder.setCount(0);
     oldPosition = 0;
     // Demande état aiguillage actif
@@ -381,9 +392,7 @@ void majEcran(){
         numAiguillage = 128;
       }
       oldPosition = newPosition;
-      ecritValeur(aiguillageNumLabel, numAiguillage);
-      ecritValeur(aiguillageNumLabelMoins, numAiguillage-1);
-      ecritValeur(aiguillageNumLabelPlus, numAiguillage+1);
+      lv_roller_set_selected(rollerAiguillage, numAiguillage, LV_ANIM_OFF);
       myZ21.SelectAiguillage(numAiguillage);
       myZ21.askAiguillageInfo();
     }
@@ -392,6 +401,8 @@ void majEcran(){
 
     // Passage à l'étape 32
     if(BtOKPressed || BtStopPressed){
+      lv_roller_set_visible_row_count(rollerAiguillage, 1);
+      lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
       etatEcran = 32;
     }
   } else if(etatEcran == 32){
@@ -408,8 +419,12 @@ void majEcran(){
 
     // Passage à l'étape 10 si on souhaite quitter, sinon on retourne à 31
     if(BtOKPressed){
+      lv_roller_set_visible_row_count(rollerAiguillage, 4);
+      lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
       etatEcran = 10;
     } else if(BtStopPressed){
+      lv_roller_set_visible_row_count(rollerAiguillage, 4);
+      lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
       etatEcran = 31;
     }
 

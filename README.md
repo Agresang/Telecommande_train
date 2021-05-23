@@ -10,7 +10,9 @@
 | SDA     |  D23    |
 | RES     |  D22    |
 | DC      |  D21    |
+
 19 est utilisé par la librairie de l'écran mais pas connectée physiquement
+
  - 25 : DT codeur
  - 26 : CLK codeur
  - 27 : SW codeur
@@ -26,8 +28,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- remplacer la sélection machine (et aiguillage) par une liste défilante (widget roller)
-    - Faire la même chose avec les aiguillages
 - intégrer les écrans que j'avais dessiné :
   - aiguillage un par un
   - rotonde
