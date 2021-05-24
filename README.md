@@ -28,10 +28,10 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Sauter un cran sur le codeur pour la sélectione des machines et aiguillages
-- intégrer les écrans que j'avais dessiné :
-  - aiguillage un par un
-  - rotonde
-  - fonctions
-- ajouter la gestions des boutons avec les registres à décalage
-- ajouter des fonctions à la Z21
+- Sauter un cran sur le codeur pour la sélection des machines et aiguillages
+- Intégrer les écrans que j'avais dessiné :
+  - Itinéraire d'aiguillages
+  - Rotonde
+  - Fonctions (utiliser un button matrix avec les touches de navigation, ou une list ?)
+- Ajouter la gestions des boutons avec les registres à décalage
+- Ajouter un bouton d'arrêt d'urgence
