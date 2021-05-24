@@ -24,21 +24,13 @@ class Z21{
     int port;
     int machineAdress;
     int machineSpeed;
-    byte machineCommand[10];
-    int machineCommandLength;
-    byte machineInfo[9];
-    int machineInfoLength;
     WiFiUDP Udp;
     int machineRealSpeed;
     int aiguillageAdress;
     byte etatAiguillage;
-    byte aiguillageCommand[9];
-    int aiguillageCommandLength;
     bool trackPowerState;
     bool shortCircuit;
-    void calculMachineChecksum();
-    void calculAskMachineChecksum();
-    void calculAiguillageChecksum();
+    void sendPacket(byte * command, int commandLength);
 };
 
 #endif
