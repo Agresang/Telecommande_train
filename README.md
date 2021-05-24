@@ -28,7 +28,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Améliorer sélection vitesse quand on passe d'une machine à l'autre (alors qu'elles roulent)
 - Sauter un cran sur le codeur pour la sélectione des machines et aiguillages
 - intégrer les écrans que j'avais dessiné :
   - aiguillage un par un

@@ -37,6 +37,7 @@ Z21 myZ21;
 byte numMachine = 5;
 unsigned int numAiguillage = 5;
 byte etatCircuit = 1;
+byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
 bool lastEtatBoutonOK = true;
@@ -293,6 +294,7 @@ void majEcran(){
     encoder.setCount(0);
     oldPosition = 0;
     myZ21.AskMachineInfo();
+    premiereInfoMachine = 1;
     
     // Passage à l'étape 11
     etatEcran = 11;
@@ -300,6 +302,14 @@ void majEcran(){
   } else if(etatEcran == 11){
     // Maintient de l'écran vitesse
     // Mise à jour des variables de l'écran et traitement des informations
+
+    // Positionnement du codeur sur la vitesse actuelle de la machine
+    if(premiereInfoMachine == 2){
+      int realSpeed = myZ21.getMachineRealSpeed();
+      encoder.setCount(realSpeed);
+      oldPosition = realSpeed;
+      premiereInfoMachine = 0;  // Info traitée
+    }
     
     // Arrêt sur un appuie du bouton STOP
     if(BtStopPressed){
@@ -611,6 +621,9 @@ void loop()
   if(myZ21.Run() > 0){
     // Récupération vitesse machine
     int realSpeed = myZ21.getMachineRealSpeed();
+    if(premiereInfoMachine == 1){   // Si demande d'une vitesse machine
+      premiereInfoMachine = 2;      // Indication qu'une nouvelle vitesse est disponible
+    }
     lv_gauge_set_value(gauge1, 1, realSpeed);
     /*Serial.print("Vitesse : ");
     Serial.println(realSpeed);*/
