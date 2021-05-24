@@ -9,8 +9,8 @@ Vapeur 050TA
 Vapeur 241P 2
 Vapeur 232U1
 Vapeur 141TA
-Rotonde
+Autorail RGP2700
 Dies/Elec 72085
 Vapeur 141TB
-Autorail RGP2700
 Autorail Bugatti
+Rotonde
