@@ -291,6 +291,8 @@ void majEcran(){
     lv_label_set_text(machineNameLabel, buff);
     lv_label_set_align(machineNameLabel, LV_LABEL_ALIGN_CENTER);
     lv_obj_align(machineNameLabel, ecranVitesse, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+    encoder.attachHalfQuad(25, 26);
+    encoder.setFilter(250);
     encoder.setCount(0);
     oldPosition = 0;
     myZ21.AskMachineInfo();
@@ -348,6 +350,8 @@ void majEcran(){
     // Initialisation de l'écran changement de machine
     lv_scr_load(ecranMachine);
     lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
+    encoder.attachSingleEdge(25, 26);
+    encoder.setFilter(1023);
     encoder.setCount(0);
     oldPosition = 0;
     
@@ -383,6 +387,8 @@ void majEcran(){
     // Initialisation de l'écran aiguillage manuel
     lv_scr_load(ecranAiguillage);
     lv_roller_set_selected(rollerAiguillage, numAiguillage, LV_ANIM_OFF);
+    encoder.attachSingleEdge(25, 26);
+    encoder.setFilter(1023);
     encoder.setCount(0);
     oldPosition = 0;
     // Demande état aiguillage actif
@@ -581,8 +587,9 @@ void setup()
     // Enable the weak pull up resistors
     ESP32Encoder::useInternalWeakPullResistors=UP;
     // Attache pins for use as encoder pins
-    encoder.attachSingleEdge(25, 26); // Passage en single edge au lieu de half quad attachHalfQuad()
-    encoder.setFilter(1023);  // Filtre inutile en half quad
+    encoder.attachHalfQuad(25, 26);
+    // encoder.attachSingleEdge(25, 26); // Passage en single edge au lieu de half quad attachHalfQuad()
+    // encoder.setFilter(1023);  // Filtre inutile en half quad
     // set starting count value after attaching
     encoder.setCount(0);
 
