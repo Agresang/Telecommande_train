@@ -24,6 +24,7 @@ class Z21{
     int port;
     int machineAdress;
     int machineSpeed;
+    bool machineDirection;
     WiFiUDP Udp;
     int machineRealSpeed;
     int aiguillageAdress;

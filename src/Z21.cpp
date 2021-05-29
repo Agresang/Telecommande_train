@@ -6,6 +6,7 @@ void Z21::Setup(const char* ipAdress, unsigned int port){
   this->port = port;
   this->machineAdress = 0;
   this->machineSpeed = 0;
+  this->machineDirection = true;  // Direction machine (1: avant, 2: arrière)
   this->aiguillageAdress = 0;
   this->Udp.begin(this->port);
   this->machineRealSpeed = 0;
@@ -54,7 +55,13 @@ void Z21::SendMachineCommand(){
   int machineCommandLength = 10;
   machineCommand[7] = this->machineAdress;  // Sélection machine
   byte vitesse = abs(this->machineSpeed);         // Vitesse machine
-  bitWrite(vitesse,7, this->machineSpeed >= 0);   // Met le bit de poids fort à 1 si vitesse positive
+  // Détermination si la machine va en avant ou en arrière. Ne change pas si la machine est à l'arrêt
+  if(this->machineSpeed > 0){
+    this->machineDirection = true;
+  } else if(this->machineSpeed < 0){
+    this->machineDirection = false;
+  }
+  bitWrite(vitesse,7, this->machineDirection);   // Met le bit de poids fort à 1 si vitesse positive
   machineCommand[8] = vitesse;              // Ecriture de la vitesse
   calculChecksum(machineCommand, machineCommandLength);
   sendPacket(machineCommand, machineCommandLength);
