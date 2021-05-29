@@ -36,6 +36,7 @@ Z21 myZ21;
 
 byte numMachine = 5;
 unsigned int numAiguillage = 5;
+byte boutonFonction = 0;
 byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 bool lastEtatBoutonStop = true;
@@ -101,6 +102,9 @@ lv_obj_t * rollerAiguillage;
 lv_obj_t * aiguillagePosDroit;
 lv_obj_t * aiguillagePosDevie;
 lv_obj_t * mbox;
+lv_obj_t * ecranFonction;
+lv_obj_t * btnmFonction;
+lv_group_t * g;
 
 void updateEncoder(){
   //Lecture position codeur
@@ -278,6 +282,21 @@ void majEcran(){
     aiguillagePosDevie = lv_led_create(ecranAiguillage, NULL);
     lv_obj_align(aiguillagePosDevie, NULL, LV_ALIGN_IN_RIGHT_MID, -20, 0);
     lv_led_off(aiguillagePosDevie);
+
+    // Ecran fonctions
+    ecranFonction = lv_obj_create(NULL, NULL);
+    // Matrice de boutons
+    btnmFonction = lv_btnmatrix_create(ecranFonction, NULL);
+    static const char * btnm_map[] = {"Feux", "\n",
+                                  "1", "2", "3", "4", "5", "\n",
+                                  "6", "7", "8", "9", "10", "\n",
+                                  "11", "12", "13", "14", "15", "\n",
+                                  "16", "17", "18", "19", "20", ""};
+    lv_btnmatrix_set_map(btnmFonction, btnm_map);
+    lv_btnmatrix_set_btn_ctrl_all(btnmFonction, LV_BTNMATRIX_CTRL_CHECKABLE);
+    lv_obj_align(btnmFonction, NULL, LV_ALIGN_CENTER, 0, 0);
+    g = lv_group_create();
+    lv_group_add_obj(g, btnmFonction);
 
     // Passage à l'étape 10 si la wifi est connectée
     etatEcran = 10;
@@ -486,6 +505,11 @@ void majEcran(){
     }
   } else if(etatEcran == 60){
     // Initialisation de l'écran fonctions
+    lv_scr_load(ecranFonction);
+    lv_group_focus_obj(btnmFonction);
+    lv_btnmatrix_set_focused_btn(btnmFonction, boutonFonction);
+    encoder.attachSingleEdge(25, 26);
+    encoder.setFilter(1023);
     encoder.setCount(0);
     oldPosition = 0;
 
@@ -493,7 +517,17 @@ void majEcran(){
     etatEcran = 61;
   } else if(etatEcran == 61){
     // Maintient de l'écran fonctions
-
+    if(BtSelectModified){
+      boutonFonction = boutonFonction - (newPosition - oldPosition);
+      if(boutonFonction<0){
+        boutonFonction = 0;
+      } else if(boutonFonction > 20){
+        boutonFonction = 20;
+      }
+      oldPosition = newPosition;
+      lv_btnmatrix_set_focused_btn(btnmFonction, boutonFonction);
+    }
+    
     lastEtatEcran = etatEcran;
     
     // Passage à l'étape 10

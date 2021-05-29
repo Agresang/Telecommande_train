@@ -28,8 +28,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Sauter un cran sur le codeur pour la sélection des machines et aiguillages
-- Garder la direction de la machine lorsque l'on met la vitesse à 0 (et pas toujours vers l'avant)
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
   - Rotonde
