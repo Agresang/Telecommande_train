@@ -213,3 +213,25 @@ void Z21::resetTrackPower(){
   // Envoie packet
   sendPacket(commandeResetTrackPower, commandeResetTrackPowerLength);
 }
+
+void Z21::SendMachineFunctionCommand(byte numFonction, bool etat){
+  // Commande fonction machine
+  byte machineFonctionCommand[10];
+  machineFonctionCommand[0] = 0xA;
+  machineFonctionCommand[1] = 0x0;
+  machineFonctionCommand[2] = 0x40;
+  machineFonctionCommand[3] = 0x0;
+  machineFonctionCommand[4] = 0xE4;
+  machineFonctionCommand[5] = 0xF8;
+  machineFonctionCommand[6] = 0x0;
+  machineFonctionCommand[7] = 0x0;
+  machineFonctionCommand[8] = 0x0;
+  machineFonctionCommand[9] = 0x0;
+  int machineFoncitonCommandLength = 10;
+  machineFonctionCommand[7] = this->machineAdress;  // Sélection machine
+  byte fontion = numFonction;         // Sélection fonction machine
+  bitWrite(fontion,6, etat);   // Ecrit état bouton
+  machineFonctionCommand[8] = fontion;              // Ecriture
+  calculChecksum(machineFonctionCommand, machineFoncitonCommandLength);
+  sendPacket(machineFonctionCommand, machineFoncitonCommandLength);
+}

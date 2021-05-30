@@ -37,6 +37,7 @@ Z21 myZ21;
 byte numMachine = 5;
 unsigned int numAiguillage = 5;
 byte boutonFonction = 0;
+unsigned long etatFonctions = 0;
 byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 bool lastEtatBoutonStop = true;
@@ -288,15 +289,15 @@ void majEcran(){
     // Matrice de boutons
     btnmFonction = lv_btnmatrix_create(ecranFonction, NULL);
     static const char * btnm_map[] = {"Feux", "\n",
-                                  "1", "2", "3", "4", "5", "\n",
-                                  "6", "7", "8", "9", "10", "\n",
-                                  "11", "12", "13", "14", "15", "\n",
-                                  "16", "17", "18", "19", "20", ""};
+                                  "F1", "F2", "F3", "F4", "F5", "\n",
+                                  "F6", "F7", "F8", "F9", "F10", "\n",
+                                  "F11", "F12", "F13", "F14", "F15", "\n",
+                                  "F16", "F17", "F18", "F19", "F20", ""};
     lv_btnmatrix_set_map(btnmFonction, btnm_map);
+    lv_obj_set_size(btnmFonction, 240, 240);
     lv_btnmatrix_set_btn_ctrl_all(btnmFonction, LV_BTNMATRIX_CTRL_CHECKABLE);
     lv_obj_align(btnmFonction, NULL, LV_ALIGN_CENTER, 0, 0);
-    g = lv_group_create();
-    lv_group_add_obj(g, btnmFonction);
+    lv_obj_add_style(btnmFonction, LV_OBJ_PART_MAIN, &style_medium);
 
     // Passage à l'étape 10 si la wifi est connectée
     etatEcran = 10;
@@ -519,13 +520,24 @@ void majEcran(){
     // Maintient de l'écran fonctions
     if(BtSelectModified){
       boutonFonction = boutonFonction - (newPosition - oldPosition);
-      if(boutonFonction<0){
-        boutonFonction = 0;
-      } else if(boutonFonction > 20){
+      if(boutonFonction >= 200){
         boutonFonction = 20;
+      } else if(boutonFonction > 20){
+        boutonFonction = 0;
       }
       oldPosition = newPosition;
       lv_btnmatrix_set_focused_btn(btnmFonction, boutonFonction);
+    }
+
+    if(BtStopPressed){
+      bool etat = not bitRead(etatFonctions, boutonFonction);
+      if(etat){
+        lv_btnmatrix_set_btn_ctrl(btnmFonction, boutonFonction, LV_BTNMATRIX_CTRL_CHECK_STATE);
+      } else {
+        lv_btnmatrix_clear_btn_ctrl(btnmFonction, boutonFonction, LV_BTNMATRIX_CTRL_CHECK_STATE);
+      }
+      bitWrite(etatFonctions, boutonFonction, etat);
+      myZ21.SendMachineFunctionCommand(boutonFonction, etat);
     }
     
     lastEtatEcran = etatEcran;

@@ -19,6 +19,7 @@ class Z21{
     void askAiguillageInfo();
     byte getCircuitState();
     void resetTrackPower();
+    void SendMachineFunctionCommand(byte numFonction, bool etat);
   private:
     const char* ipAdress;
     int port;

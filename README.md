@@ -28,9 +28,11 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
+- Récupérer état fonctions via la tram loco info (celle dans laquelle on récupère la vitesse)
+- Debugger le passage halfquad/sigle edge
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
   - Rotonde
-  - Fonctions (utiliser un button matrix avec les touches de navigation, ou une list ?)
+  - Fonctions
 - Ajouter la gestions des boutons avec les registres à décalage
 - Ajouter un bouton d'arrêt d'urgence
