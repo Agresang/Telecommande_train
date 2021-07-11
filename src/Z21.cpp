@@ -113,7 +113,8 @@ int Z21::Run(){
     Serial.println();*/
 
     if(buffer[1] == 0x0 && buffer[2] == 0x40 && buffer[3] == 0x0 && buffer[4] == 0xEF && buffer[6] == this->machineAdress){
-      // Réception d'une vitesse d'une machine et vérification qu'il s'agit de la machine actuelle
+      // Réception d'une vitesse (et état des foncitons) d'une machine et vérification qu'il s'agit de la machine actuelle
+      // Lecture vitesse
       bool direction = bitRead(buffer[8], 7);
       byte realSpeed = buffer[8];
       bitClear(realSpeed, 7);
@@ -121,6 +122,20 @@ int Z21::Run(){
         this->machineRealSpeed = realSpeed;
       } else {
         this->machineRealSpeed = -1 * realSpeed;
+      }
+      // Lecture fonctions F0 à F4
+      this->functionState[0] = bitRead(buffer[9], 4);
+      this->functionState[1] = bitRead(buffer[9], 0);
+      this->functionState[2] = bitRead(buffer[9], 1);
+      this->functionState[3] = bitRead(buffer[9], 2);
+      this->functionState[4] = bitRead(buffer[9], 3);
+      // Lecture fonctions F5 à F12
+      for(int i=5; i<=12; i++){
+        this->functionState[i] = bitRead(buffer[10], i-5);
+      }
+      // Lecture fonctions F13 à F20
+      for(int i=13; i<=20; i++){
+        this->functionState[i] = bitRead(buffer[11], i-13);
       }
       
     } else if(buffer[0] == 0x9 && buffer[1] == 0x0 && buffer[2] == 0x40 && buffer[3] == 0x0 && buffer[4] == 0x43 && buffer[6] == this->aiguillageAdress){
@@ -234,4 +249,8 @@ void Z21::SendMachineFunctionCommand(byte numFonction, bool etat){
   machineFonctionCommand[8] = fontion;              // Ecriture
   calculChecksum(machineFonctionCommand, machineFoncitonCommandLength);
   sendPacket(machineFonctionCommand, machineFoncitonCommandLength);
+}
+
+bool Z21::GetMachineFunctionState(int numFunction){
+  return this->functionState[numFunction];
 }

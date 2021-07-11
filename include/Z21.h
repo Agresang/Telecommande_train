@@ -20,6 +20,7 @@ class Z21{
     byte getCircuitState();
     void resetTrackPower();
     void SendMachineFunctionCommand(byte numFonction, bool etat);
+    bool GetMachineFunctionState(int numFunction);
   private:
     const char* ipAdress;
     int port;
@@ -32,6 +33,7 @@ class Z21{
     byte etatAiguillage;
     bool trackPowerState;
     bool shortCircuit;
+    bool functionState[21];
     void sendPacket(byte * command, int commandLength);
 };
 

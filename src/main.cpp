@@ -531,11 +531,6 @@ void majEcran(){
 
     if(BtStopPressed){
       bool etat = not bitRead(etatFonctions, boutonFonction);
-      if(etat){
-        lv_btnmatrix_set_btn_ctrl(btnmFonction, boutonFonction, LV_BTNMATRIX_CTRL_CHECK_STATE);
-      } else {
-        lv_btnmatrix_clear_btn_ctrl(btnmFonction, boutonFonction, LV_BTNMATRIX_CTRL_CHECK_STATE);
-      }
       bitWrite(etatFonctions, boutonFonction, etat);
       myZ21.SendMachineFunctionCommand(boutonFonction, etat);
     }
@@ -679,6 +674,16 @@ void loop()
       premiereInfoMachine = 2;      // Indication qu'une nouvelle vitesse est disponible
     }
     lv_gauge_set_value(gauge1, 1, realSpeed);
+    //Récupération état fonctions
+    for(int i=0; i<21; i++){
+      bool etat = myZ21.GetMachineFunctionState(i);
+      if(etat){
+        lv_btnmatrix_set_btn_ctrl(btnmFonction, i, LV_BTNMATRIX_CTRL_CHECK_STATE);
+      } else {
+        lv_btnmatrix_clear_btn_ctrl(btnmFonction, i, LV_BTNMATRIX_CTRL_CHECK_STATE);
+      }
+      bitWrite(etatFonctions, i, etat);
+    }
     /*Serial.print("Vitesse : ");
     Serial.println(realSpeed);*/
     // Récupération état aiguillage

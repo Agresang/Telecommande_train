@@ -28,7 +28,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Récupérer état fonctions via la tram loco info (celle dans laquelle on récupère la vitesse)
+- Rendre la sélection d'un bouton fonction plus visible (surtout quand la fonction est active)
 - Debugger le passage halfquad/sigle edge
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
