@@ -188,6 +188,12 @@ void majEcran(){
     static lv_style_t style_big;
     lv_style_init(&style_big);
     lv_style_set_text_font(&style_big, LV_STATE_DEFAULT, &lv_font_montserrat_30);
+    //---------------------------
+    static lv_style_t style_bouton;
+    lv_style_init(&style_bouton);
+    lv_style_set_text_font(&style_bouton, LV_STATE_DEFAULT, &lv_font_montserrat_26);
+    lv_style_set_border_color(&style_bouton, LV_STATE_FOCUSED, LV_COLOR_RED);
+    lv_style_set_border_width(&style_bouton, LV_STATE_FOCUSED, 5);
 
     // Ecran d'acceuil
     ecranAcceuil = lv_obj_create(NULL, NULL);
@@ -297,7 +303,7 @@ void majEcran(){
     lv_obj_set_size(btnmFonction, 240, 240);
     lv_btnmatrix_set_btn_ctrl_all(btnmFonction, LV_BTNMATRIX_CTRL_CHECKABLE);
     lv_obj_align(btnmFonction, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_add_style(btnmFonction, LV_OBJ_PART_MAIN, &style_medium);
+    lv_obj_add_style(btnmFonction, LV_BTNMATRIX_PART_BTN, &style_bouton);
 
     // Passage à l'étape 10 si la wifi est connectée
     etatEcran = 10;
