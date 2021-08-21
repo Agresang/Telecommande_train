@@ -28,8 +28,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Rendre la sélection d'un bouton fonction plus visible (surtout quand la fonction est active)
-- Debugger le passage halfquad/sigle edge
+- Debugger le passage halfquad/sigle edge (mise à jour de la bibliothèque + augmentation du filtre. A voir avec le temps)
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
   - Rotonde

@@ -377,7 +377,7 @@ void majEcran(){
     lv_scr_load(ecranMachine);
     lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
     encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(1023);
+    encoder.setFilter(8000);
     encoder.setCount(0);
     oldPosition = 0;
     
@@ -414,7 +414,7 @@ void majEcran(){
     lv_scr_load(ecranAiguillage);
     lv_roller_set_selected(rollerAiguillage, numAiguillage, LV_ANIM_OFF);
     encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(1023);
+    encoder.setFilter(8000);
     encoder.setCount(0);
     oldPosition = 0;
     // Demande état aiguillage actif
@@ -516,7 +516,7 @@ void majEcran(){
     lv_group_focus_obj(btnmFonction);
     lv_btnmatrix_set_focused_btn(btnmFonction, boutonFonction);
     encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(1023);
+    encoder.setFilter(8000);
     encoder.setCount(0);
     oldPosition = 0;
 
@@ -636,7 +636,7 @@ void setup()
     // Attache pins for use as encoder pins
     encoder.attachHalfQuad(25, 26);
     // encoder.attachSingleEdge(25, 26); // Passage en single edge au lieu de half quad attachHalfQuad()
-    // encoder.setFilter(1023);  // Filtre inutile en half quad
+    // encoder.setFilter(4095);  // Filtre inutile en half quad
     // set starting count value after attaching
     encoder.setCount(0);
 
