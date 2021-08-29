@@ -31,7 +31,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 - Debugger le passage halfquad/sigle edge (mise à jour de la bibliothèque + augmentation du filtre. A voir avec le temps)
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
-  - Rotonde
+  - Rotonde (interface graphique faite, reste à envoyer les commandes)
   - Fonctions
 - Ajouter la gestions des boutons avec les registres à décalage
 - Ajouter un bouton d'arrêt d'urgence

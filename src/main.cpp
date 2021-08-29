@@ -9,6 +9,7 @@
 #include <ArduinoOTA.h>
 #include <SPIFFS.h>
 #include <SD.h>
+#include <rotonde.h>
 
 #define BT_STOP               27
 #define BT_SELECT_MACHINE     16
@@ -40,6 +41,9 @@ byte boutonFonction = 0;
 unsigned long etatFonctions = 0;
 byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
+int numStationRotonde = 0;
+//short stationRotonde[] = {32,34,36,40,8,9,10,12,13,14,8,10,12,14,32,33,34,36,37,38};
+short stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14};
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
 bool lastEtatBoutonOK = true;
@@ -106,6 +110,18 @@ lv_obj_t * mbox;
 lv_obj_t * ecranFonction;
 lv_obj_t * btnmFonction;
 lv_group_t * g;
+lv_obj_t * ecranRotonde;
+lv_obj_t * imgRotonde;
+lv_obj_t * line1;
+lv_obj_t * line3;
+lv_obj_t * line4;
+lv_obj_t * line7;
+lv_obj_t * line8;
+lv_obj_t * line9;
+lv_obj_t * line10;
+lv_obj_t * line11;
+lv_obj_t * line12;
+lv_obj_t * line13;
 
 void updateEncoder(){
   //Lecture position codeur
@@ -194,6 +210,16 @@ void majEcran(){
     lv_style_set_text_font(&style_bouton, LV_STATE_DEFAULT, &lv_font_montserrat_26);
     lv_style_set_border_color(&style_bouton, LV_STATE_FOCUSED, LV_COLOR_RED);
     lv_style_set_border_width(&style_bouton, LV_STATE_FOCUSED, 5);
+    //---------------------------
+    static lv_style_t style_bg_blanc;
+    lv_style_init(&style_bg_blanc);
+    lv_style_set_bg_color(&style_bg_blanc, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    //---------------------------
+    static lv_style_t style_line;
+    lv_style_init(&style_line);
+    lv_style_set_line_width(&style_line, LV_STATE_DEFAULT, 8);
+    lv_style_set_line_color(&style_line, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+    lv_style_set_line_rounded(&style_line, LV_STATE_DEFAULT, true);
 
     // Ecran d'acceuil
     ecranAcceuil = lv_obj_create(NULL, NULL);
@@ -289,6 +315,77 @@ void majEcran(){
     aiguillagePosDevie = lv_led_create(ecranAiguillage, NULL);
     lv_obj_align(aiguillagePosDevie, NULL, LV_ALIGN_IN_RIGHT_MID, -20, 0);
     lv_led_off(aiguillagePosDevie);
+
+    // Ecran rotonde
+    ecranRotonde = lv_obj_create(NULL, NULL);
+    lv_obj_add_style(ecranRotonde, LV_STATE_DEFAULT, &style_bg_blanc);
+    // Image
+    LV_IMG_DECLARE(rotonde);
+    imgRotonde = lv_img_create(ecranRotonde, NULL);
+    lv_img_set_src(imgRotonde, &rotonde);
+    lv_obj_align(imgRotonde, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_img_set_pivot(imgRotonde, 90, 90);
+    // Lignes
+    static lv_point_t line_points1[] = { {51, 80}, {16, 60} };
+    line1 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line1, true);
+    lv_line_set_points(line1, line_points1, 2);
+    lv_obj_add_style(line1, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line1, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points3[] = { {43, 99}, {4, 89} };
+    line3 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line3, true);
+    lv_line_set_points(line3, line_points3, 2);
+    lv_obj_add_style(line3, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line3, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points4[] = { {40, 120}, {0, 120} };
+    line4 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line4, true);
+    lv_line_set_points(line4, line_points4, 2);
+    lv_obj_add_style(line4, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line4, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points7[] = { {51, 160}, {16, 180} };
+    line7 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line7, true);
+    lv_line_set_points(line7, line_points7, 2);
+    lv_obj_add_style(line7, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line7, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points8[] = { {189, 160}, {224, 180} };
+    line8 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line8, true);
+    lv_line_set_points(line8, line_points8, 2);
+    lv_obj_add_style(line8, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line8, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points9[] = { {194, 151}, {231, 166} };
+    line9 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line9, true);
+    lv_line_set_points(line9, line_points9, 2);
+    lv_obj_add_style(line9, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line9, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points10[] = { {197, 141}, {236, 151} };
+    line10 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line10, true);
+    lv_line_set_points(line10, line_points10, 2);
+    lv_obj_add_style(line10, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line10, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points11[] = { {200, 120}, {240, 120} };
+    line11 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line11, true);
+    lv_line_set_points(line11, line_points11, 2);
+    lv_obj_add_style(line11, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line11, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points12[] = { {199, 110}, {239, 104} };
+    line12 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line12, true);
+    lv_line_set_points(line12, line_points12, 2);
+    lv_obj_add_style(line12, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line12, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t line_points13[] = { {197, 99}, {236, 89} };
+    line13 = lv_line_create(ecranRotonde, NULL);
+    lv_line_set_y_invert(line13, true);
+    lv_line_set_points(line13, line_points13, 2);
+    lv_obj_add_style(line13, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(line13, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
 
     // Ecran fonctions
     ecranFonction = lv_obj_create(NULL, NULL);
@@ -496,6 +593,10 @@ void majEcran(){
     }
   } else if(etatEcran == 50){
     // Initialisation de l'écran rotonde
+    lv_scr_load(ecranRotonde);
+    lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75); // Initialisation position rotonde (on ne la connait pas bien sûr)
+    encoder.attachSingleEdge(25, 26);
+    encoder.setFilter(8000);
     encoder.setCount(0);
     oldPosition = 0;
 
@@ -503,6 +604,17 @@ void majEcran(){
     etatEcran = 51;
   } else if(etatEcran == 51){
     // Maintient de l'écran rotonde
+    if(BtSelectModified){
+      numStationRotonde = numStationRotonde - (newPosition - oldPosition);
+      if(numStationRotonde > 12){
+        numStationRotonde = 0;
+      } else if(numStationRotonde < 0){
+        numStationRotonde = 12;
+      }
+      oldPosition = newPosition;
+      lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75);
+      Serial.println(numStationRotonde);
+    }
 
     lastEtatEcran = etatEcran;
 
