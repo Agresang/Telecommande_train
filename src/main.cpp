@@ -21,6 +21,7 @@
 #define TIME_AIGUILLAGE_SELECT  1000
 #define TIME_RESET  500
 #define TIME_SUBSCRIBE_RENOUVELLEMENT 60000
+#define TIME_ROTONDE_SELECT   500
 
 // Initialisation codeur
 ESP32Encoder encoder;
@@ -35,7 +36,7 @@ const char* ipAdress = "192.168.0.111";
 
 Z21 myZ21;
 
-byte numMachine = 5;
+byte numMachine = 3;
 unsigned int numAiguillage = 5;
 byte boutonFonction = 0;
 unsigned long etatFonctions = 0;
@@ -43,7 +44,8 @@ byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 int numStationRotonde = 0;
 //short stationRotonde[] = {32,34,36,40,8,9,10,12,13,14,8,10,12,14,32,33,34,36,37,38};
-short stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14};
+short stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14,16};
+short fonctionRotonde[] = {1,16,2,3,19,20,4,5,6,7,8,9,10,14};
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
 bool lastEtatBoutonOK = true;
@@ -65,6 +67,7 @@ int lastEtatEcran = 0;
 unsigned long timer = 0;
 unsigned long timerAiguillage = 0;
 unsigned long timerReset = 0;
+unsigned long timerRotonde = 0;
 
 TFT_eSPI tft = TFT_eSPI(); /* TFT instance */
 static lv_disp_buf_t disp_buf;
@@ -606,14 +609,18 @@ void majEcran(){
     // Maintient de l'écran rotonde
     if(BtSelectModified){
       numStationRotonde = numStationRotonde - (newPosition - oldPosition);
-      if(numStationRotonde > 12){
+      if(numStationRotonde > 13){
         numStationRotonde = 0;
       } else if(numStationRotonde < 0){
-        numStationRotonde = 12;
+        numStationRotonde = 13;
       }
       oldPosition = newPosition;
       lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75);
-      Serial.println(numStationRotonde);
+    }
+
+    if(BtStopPressed){
+      // Validation position rotonde
+      etatEcran = 52;
     }
 
     lastEtatEcran = etatEcran;
@@ -622,6 +629,31 @@ void majEcran(){
     if(BtOKPressed){
       etatEcran = 10;
     }
+
+  } else if(etatEcran == 52){
+    // Sélection numéro de machine (la rotonde est la 15)
+    myZ21.SelectMachine(15);    
+    // Envoie consigne rotonde
+    myZ21.SendMachineFunctionCommand(fonctionRotonde[numStationRotonde], true);
+    // Init tempo
+    timerRotonde = millis() + TIME_ROTONDE_SELECT;
+
+    etatEcran = 53;
+
+  } else if(etatEcran == 53){
+    // Attente de quelques secondes
+    if(millis() >= timerRotonde){
+      etatEcran = 54;
+    }
+
+  } else if(etatEcran == 54){
+    // Arrêt envoie consigne
+    myZ21.SendMachineFunctionCommand(fonctionRotonde[numStationRotonde], false);
+    // Re-sélection du numéro de la machine
+    myZ21.SelectMachine(numMachine);
+
+    etatEcran = 51;
+
   } else if(etatEcran == 60){
     // Initialisation de l'écran fonctions
     lv_scr_load(ecranFonction);
