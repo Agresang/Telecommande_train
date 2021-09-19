@@ -750,7 +750,7 @@ void majLVGL(void * parameter){
       lv_task_handler();
       ecranProcessComplete = true;
     }
-    vTaskDelay(10);
+    vTaskDelay(1);
   }
 }
 
@@ -815,7 +815,7 @@ void setup()
     myZ21.SubscribeInfo();
 
     // Ajout tâche parallèle pour la gestion de l'écran
-    xTaskCreate(majLVGL,"MAJ Ecran",25000,NULL,1,NULL);
+    xTaskCreatePinnedToCore(majLVGL,"MAJ Ecran",25000,NULL,1,NULL,0);
 }
 
 void loop()
