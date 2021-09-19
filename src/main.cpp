@@ -63,6 +63,7 @@ bool BtItinerairePressed = false;
 
 int etatEcran = 0;
 int lastEtatEcran = 0;
+bool ecranProcessComplete = true;
 
 unsigned long timer = 0;
 unsigned long timerAiguillage = 0;
@@ -739,7 +740,17 @@ void majEcran(){
       etatEcran = 70;
     }
 
-  lv_task_handler(); /* let the GUI do its work */
+  // lv_task_handler(); /* let the GUI do its work, à voir s'il est possible de le mettre dans une tache en parallèle */
+}
+
+void majLVGL(void * parameter){
+  while (true){
+    if(not ecranProcessComplete){
+      lv_task_handler();
+      ecranProcessComplete = true;
+    }
+    vTaskDelay(10);
+  }
 }
 
 void setup()
@@ -799,6 +810,9 @@ void setup()
     myZ21.SelectMachine(numMachine);
     myZ21.SelectAiguillage(numAiguillage);
     myZ21.SubscribeInfo();
+
+    // Ajout tâche parallèle pour la gestion de l'écran
+    xTaskCreate(majLVGL,"MAJ Ecran",25000,NULL,1,NULL);
 }
 
 void loop()
@@ -853,5 +867,9 @@ void loop()
   }
   
   majEcran();
+  if (ecranProcessComplete){
+    // Mise à jour de l'écran dans une tâche parallèle
+    ecranProcessComplete = false;
+  }
   ArduinoOTA.handle();
 }

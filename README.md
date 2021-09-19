@@ -31,7 +31,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 - Debugger le passage halfquad/sigle edge => fonctionne mais au bout d'un moment il y a trop d'encodeur. La fonction ne permet plus d'en ajouter. A voir s'il est possible d'en supprimer
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
-  - Rotonde (essayer d'optimiser le temps de réaction)
   - Fonctions
 - Ajouter la gestions des boutons avec les registres à décalage
 - Ajouter un bouton d'arrêt d'urgence
