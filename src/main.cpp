@@ -24,7 +24,9 @@
 #define TIME_ROTONDE_SELECT   500
 
 // Initialisation codeur
-ESP32Encoder encoder;
+ESP32Encoder encoderH;  // Encodeur Half-quad
+ESP32Encoder encoderS;  // Encodeur Single-quad
+bool encoderType = true;       // 0: Single-quad   1: Half-quad
 long oldPosition  = -999;
 long newPosition = 0;
 
@@ -129,7 +131,11 @@ lv_obj_t * line13;
 
 void updateEncoder(){
   //Lecture position codeur
-  newPosition = -1 * encoder.getCount();
+  if(encoderType){
+    newPosition = -1 * encoderH.getCount();
+  }else{
+    newPosition = -1 * encoderS.getCount();
+  }
   //Serial.println(newPosition);
 
   // S'il y a un changement de position codeur
@@ -418,9 +424,8 @@ void majEcran(){
     lv_label_set_text(machineNameLabel, buff);
     lv_label_set_align(machineNameLabel, LV_LABEL_ALIGN_CENTER);
     lv_obj_align(machineNameLabel, ecranVitesse, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
-    encoder.attachHalfQuad(25, 26);
-    encoder.setFilter(250);
-    encoder.setCount(0);
+    encoderType = true;
+    encoderH.setCount(0);
     oldPosition = 0;
     myZ21.AskMachineInfo();
     premiereInfoMachine = 1;
@@ -435,14 +440,14 @@ void majEcran(){
     // Positionnement du codeur sur la vitesse actuelle de la machine
     if(premiereInfoMachine == 2){
       int realSpeed = myZ21.getMachineRealSpeed();
-      encoder.setCount(realSpeed);
+      encoderH.setCount(realSpeed);
       oldPosition = realSpeed;
       premiereInfoMachine = 0;  // Info traitée
     }
     
     // Arrêt sur un appuie du bouton STOP
     if(BtStopPressed){
-      encoder.setCount(0);
+      encoderH.setCount(0);
     }
 
     //Modification de la vitesse si on tourne la roue
@@ -477,9 +482,8 @@ void majEcran(){
     // Initialisation de l'écran changement de machine
     lv_scr_load(ecranMachine);
     lv_roller_set_selected(rollerMachine, numMachine, LV_ANIM_OFF);
-    encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(8000);
-    encoder.setCount(0);
+    encoderType = false;
+    encoderS.setCount(0);
     oldPosition = 0;
     
     // Passage à l'étape 21
@@ -514,9 +518,8 @@ void majEcran(){
     // Initialisation de l'écran aiguillage manuel
     lv_scr_load(ecranAiguillage);
     lv_roller_set_selected(rollerAiguillage, numAiguillage, LV_ANIM_OFF);
-    encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(8000);
-    encoder.setCount(0);
+    encoderType = false;
+    encoderS.setCount(0);
     oldPosition = 0;
     // Demande état aiguillage actif
     myZ21.askAiguillageInfo();
@@ -573,7 +576,7 @@ void majEcran(){
 
   } else if(etatEcran == 33){
     // Attente
-    encoder.setCount(0);
+    encoderS.setCount(0);
     oldPosition = 0;
     if(millis() > timerAiguillage){
       etatEcran = 32;
@@ -581,7 +584,7 @@ void majEcran(){
     
   } else if(etatEcran == 40){
     // Initialisation de l'écran sélection d'ininéraire
-    encoder.setCount(0);
+    encoderS.setCount(0);
     oldPosition = 0;
 
     // Passage à l'étape 41
@@ -599,9 +602,8 @@ void majEcran(){
     // Initialisation de l'écran rotonde
     lv_scr_load(ecranRotonde);
     lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75); // Initialisation position rotonde (on ne la connait pas bien sûr)
-    encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(8000);
-    encoder.setCount(0);
+    encoderType = false;
+    encoderS.setCount(0);
     oldPosition = 0;
 
     //Passage à l'étape 51
@@ -660,9 +662,8 @@ void majEcran(){
     lv_scr_load(ecranFonction);
     lv_group_focus_obj(btnmFonction);
     lv_btnmatrix_set_focused_btn(btnmFonction, boutonFonction);
-    encoder.attachSingleEdge(25, 26);
-    encoder.setFilter(8000);
-    encoder.setCount(0);
+    encoderType = false;
+    encoderS.setCount(0);
     oldPosition = 0;
 
     //Passage à l'étape 61
@@ -702,7 +703,8 @@ void majEcran(){
     }
     lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
     
-    encoder.setCount(0);
+    encoderH.setCount(0);
+    encoderS.setCount(0);
     oldPosition = 0;
 
     //Passage à l'étape 61
@@ -739,11 +741,10 @@ void majEcran(){
       // Test
       etatEcran = 70;
     }
-
-  // lv_task_handler(); /* let the GUI do its work, à voir s'il est possible de le mettre dans une tache en parallèle */
 }
 
 void majLVGL(void * parameter){
+  // Synchro avec la gestion de l'écran qui tourne en parallèle
   while (true){
     if(not ecranProcessComplete){
       lv_task_handler();
@@ -788,12 +789,14 @@ void setup()
     // Init codeur
     // Enable the weak pull up resistors
     ESP32Encoder::useInternalWeakPullResistors=UP;
-    // Attache pins for use as encoder pins
-    encoder.attachHalfQuad(25, 26);
-    // encoder.attachSingleEdge(25, 26); // Passage en single edge au lieu de half quad attachHalfQuad()
-    // encoder.setFilter(4095);  // Filtre inutile en half quad
-    // set starting count value after attaching
-    encoder.setCount(0);
+    // Init encodeur Half-quad
+    encoderH.attachHalfQuad(25, 26);
+    encoderH.setFilter(250);
+    encoderH.setCount(0);
+    // Init encodeur Single-quad
+    encoderS.attachSingleEdge(25, 26);
+    encoderS.setFilter(8000);
+    encoderS.setCount(0);
 
     // Affichage écran acceuil
     majEcran();
