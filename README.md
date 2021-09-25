@@ -28,7 +28,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Optimiser l'affichage de la rotonde (fonctionne mais les autres écrans ne fonctionne plus beaucoup, essayer de faire la mise à jour de l'écran en tâche parallèle seulement lorsque la rotonde est affichée)
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
   - Fonctions

@@ -870,9 +870,12 @@ void loop()
   }
   
   majEcran();
-  if (ecranProcessComplete){
-    // Mise à jour de l'écran dans une tâche parallèle
+  if (ecranProcessComplete && (etatEcran >= 50 && etatEcran < 60)){
+    // Mise à jour de l'écran dans une tâche parallèle si on est dans l'affichage de la rotonde
     ecranProcessComplete = false;
+  } else if(etatEcran < 50 || etatEcran >= 60){
+    // Mise à jour de l'écran lorsque l'on n'est pas dans l'écran de la rotonde
+    lv_task_handler();
   }
   ArduinoOTA.handle();
 }
