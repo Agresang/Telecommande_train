@@ -6,6 +6,7 @@
 #include <WiFiClient.h>
 #include <WiFiGeneric.h>
 #include <Z21.h>
+#include <inregister.h>
 #include <ArduinoOTA.h>
 #include <SPIFFS.h>
 #include <SD.h>
@@ -17,6 +18,9 @@
 #define BT_SELECT_AIGUILLAGE  13
 #define BT_SELECT_ROTONDE     14
 #define BT_SELECT_FONCTION    15
+#define LATCH_PIN             32
+#define CLOCK_PIN             33
+#define DATA_PIN              34
 
 #define TIME_AIGUILLAGE_SELECT  1000
 #define TIME_RESET  500
@@ -37,6 +41,7 @@ const unsigned int localPort = 21105;
 const char* ipAdress = "192.168.0.111";
 
 Z21 myZ21;
+inregister myRegister;
 
 byte numMachine = 3;
 unsigned int numAiguillage = 5;
@@ -754,6 +759,13 @@ void majLVGL(void * parameter){
   }
 }
 
+void testLectureRegistre(){
+  for(int i=0; i<16; i++){
+    Serial.print(myRegister.readInput(i));
+  }
+  Serial.println();
+}
+
 void setup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -765,6 +777,9 @@ void setup()
     pinMode(BT_SELECT_AIGUILLAGE, INPUT_PULLUP);
     pinMode(BT_SELECT_ROTONDE, INPUT_PULLUP);
     pinMode(BT_SELECT_FONCTION, INPUT_PULLUP);
+
+    // Initialisation registres à décalage d'entré
+    myRegister.Setup(LATCH_PIN, CLOCK_PIN, DATA_PIN);
 
     lv_init();
 
@@ -822,6 +837,7 @@ void loop()
 {
   //Etat bouton
   updateBouton();
+  myRegister.fetch();
 
   //Etat encodeur
   updateEncoder();
@@ -877,5 +893,8 @@ void loop()
     // Mise à jour de l'écran lorsque l'on n'est pas dans l'écran de la rotonde
     lv_task_handler();
   }
+
+  testLectureRegistre();
+
   ArduinoOTA.handle();
 }

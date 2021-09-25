@@ -21,6 +21,10 @@
  - 13 : Sélection aiguillage
  - 14 : Sélection rotonde
  - 15 : Sélection fonction
+ - 32 : Latch registres à décalage
+ - 33 : Clock registres à décalage
+ - 34 : Data registres à décalage
+ - 35 : Arrêt d'urgence (trouver un bouton du style AU avec u état enfoncé permanent)
 
 # Mise à jour liste machines
 
@@ -30,6 +34,5 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages
-  - Fonctions
-- Ajouter la gestions des boutons avec les registres à décalage
-- Ajouter un bouton d'arrêt d'urgence
+- Ajouter la gestions des boutons avec les registres à décalage (ajouter des boutons à la maquette)
+- Ajouter un bouton d'arrêt d'urgence (trouver un bouton qui va bien)
