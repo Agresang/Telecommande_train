@@ -50,15 +50,16 @@ unsigned long etatFonctions = 0;
 byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 int numStationRotonde = 0;
-//short stationRotonde[] = {32,34,36,40,8,9,10,12,13,14,8,10,12,14,32,33,34,36,37,38};
 short stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14,16};
 short fonctionRotonde[] = {1,16,2,3,19,20,4,5,6,7,8,9,10,14};
+String  itineraire[] = {"A-gauche", "B-gauche", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A-droite", "B-droite", "C", "D", "1-ile", "2-ile", "3-ile", "4-ile", "5-ile", "ROTONDE", "SERVICE"};
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
 bool lastEtatBoutonOK = true;
 bool lastEtatBoutonSelectAiguillage = true;
 bool lastEtatBoutonSelectRotonde = true;
 bool lastEtatBoutonSelectFonction = true;
+bool lastEtatBoutonItineraire = true;
 bool BtStopPressed = false;
 bool BtSelectMachinePressed = false;
 bool BtOKPressed = false;
@@ -67,6 +68,7 @@ bool BtSelectRotondePressed = false;
 bool BtSelectFonctionPressed = false;
 bool BtSelectModified = false;
 bool BtItinerairePressed = false;
+bool BtItineraireNumero = 0;
 
 int etatEcran = 0;
 int lastEtatEcran = 0;
@@ -120,7 +122,6 @@ lv_obj_t * aiguillagePosDevie;
 lv_obj_t * mbox;
 lv_obj_t * ecranFonction;
 lv_obj_t * btnmFonction;
-lv_group_t * g;
 lv_obj_t * ecranRotonde;
 lv_obj_t * imgRotonde;
 lv_obj_t * line1;
@@ -133,6 +134,11 @@ lv_obj_t * line10;
 lv_obj_t * line11;
 lv_obj_t * line12;
 lv_obj_t * line13;
+lv_obj_t * ecranItineraire;
+lv_obj_t * arrowLine1;
+lv_obj_t * arrowLine2;
+lv_obj_t * departLabel;
+lv_obj_t * arriveLabel;
 
 void updateEncoder(){
   //Lecture position codeur
@@ -192,7 +198,19 @@ void updateBouton(){
   lastEtatBoutonSelectRotonde = etatBoutonSelectRotonde;
   lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
   // Gestion des boutons itiléraires (à modifier plus tard)
+  bool etatBoutonItineraire = false;
+  BtItineraireNumero = 0;
+  for(int i=0; i<16; i++){
+    bool state = myRegister.readInput(i);
+    BtItineraireNumero += state * (i+1);
+    etatBoutonItineraire = etatBoutonItineraire || state;
+  }
   BtItinerairePressed = false;
+  if((etatBoutonItineraire != lastEtatBoutonItineraire) && !etatBoutonItineraire){
+    BtItinerairePressed = true;
+  }
+  lastEtatBoutonItineraire = etatBoutonItineraire;
+  Serial.println(BtItineraireNumero);
 }
 
 void ecritValeur(lv_obj_t * lvglLabel, int valeur){
@@ -417,6 +435,34 @@ void majEcran(){
     lv_obj_align(btnmFonction, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_obj_add_style(btnmFonction, LV_BTNMATRIX_PART_BTN, &style_bouton);
 
+    // Ecran itinéraire
+    ecranItineraire = lv_obj_create(NULL, NULL);
+    // Dessin de la fèche
+    static lv_point_t arrowPoints1[] = { {100, 120}, {140, 120}, {135, 125} };
+    arrowLine1 = lv_line_create(ecranItineraire, NULL);
+    lv_line_set_y_invert(arrowLine1, true);
+    lv_line_set_points(arrowLine1, arrowPoints1, 3);
+    lv_obj_add_style(arrowLine1, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(arrowLine1, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    static lv_point_t arrowPoints2[] = { {140, 120}, {135, 115} };
+    arrowLine2 = lv_line_create(ecranItineraire, NULL);
+    lv_line_set_y_invert(arrowLine2, true);
+    lv_line_set_points(arrowLine2, arrowPoints2, 2);
+    lv_obj_add_style(arrowLine2, LV_LINE_PART_MAIN, &style_line);
+    lv_obj_align(arrowLine2, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
+    // Label départ
+    departLabel = lv_label_create(ecranItineraire, NULL);
+    lv_obj_align(departLabel, ecranItineraire, LV_ALIGN_CENTER, 70, 0);
+    lv_label_set_text(departLabel, "----");
+    lv_obj_add_style(departLabel, LV_OBJ_PART_MAIN, &style_big);
+    lv_label_set_align(departLabel, LV_LABEL_ALIGN_CENTER);
+    // Label arrivée
+    arriveLabel = lv_label_create(ecranItineraire, NULL);
+    lv_obj_align(arriveLabel, ecranItineraire, LV_ALIGN_CENTER, 170, 0);
+    lv_label_set_text(arriveLabel, "----");
+    lv_obj_add_style(arriveLabel, LV_OBJ_PART_MAIN, &style_big);
+    lv_label_set_align(arriveLabel, LV_LABEL_ALIGN_CENTER);
+
     // Passage à l'étape 10 si la wifi est connectée
     etatEcran = 10;
     
@@ -589,6 +635,7 @@ void majEcran(){
     
   } else if(etatEcran == 40){
     // Initialisation de l'écran sélection d'ininéraire
+    lv_scr_load(ecranItineraire);
     encoderS.setCount(0);
     oldPosition = 0;
 
@@ -598,11 +645,32 @@ void majEcran(){
     // Maintient de l'écran sélection d'ininéraire
 
     lastEtatEcran = etatEcran;
-    
-    // Passage à l'étape 10
-    if(BtOKPressed){
+
+    if(BtItinerairePressed){
+      // Sélection d'un départ
+      char buff[10];
+      itineraire[BtItineraireNumero].toCharArray(buff, 10);
+      lv_label_set_text(departLabel, buff);
+      etatEcran = 42;
+    } else if(BtOKPressed){
       etatEcran = 10;
     }
+  
+  } else if(etatEcran == 42){
+
+    if(BtItinerairePressed){
+      // Sélection d'une arrivée
+      char buff[10];
+      itineraire[BtItineraireNumero].toCharArray(buff, 10);
+      lv_label_set_text(arriveLabel, buff);
+      etatEcran = 43;
+    }
+
+  } else if(etatEcran == 43){
+
+    // Retour sur l'écran 41, exécuter les changements d'aiguillage ici
+    etatEcran = 41;
+
   } else if(etatEcran == 50){
     // Initialisation de l'écran rotonde
     lv_scr_load(ecranRotonde);
@@ -759,13 +827,6 @@ void majLVGL(void * parameter){
   }
 }
 
-void testLectureRegistre(){
-  for(int i=0; i<16; i++){
-    Serial.print(myRegister.readInput(i));
-  }
-  Serial.println();
-}
-
 void setup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -836,8 +897,8 @@ void setup()
 void loop()
 {
   //Etat bouton
-  updateBouton();
   myRegister.fetch();
+  updateBouton();
 
   //Etat encodeur
   updateEncoder();
@@ -893,8 +954,6 @@ void loop()
     // Mise à jour de l'écran lorsque l'on n'est pas dans l'écran de la rotonde
     lv_task_handler();
   }
-
-  testLectureRegistre();
 
   ArduinoOTA.handle();
 }
