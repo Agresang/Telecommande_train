@@ -34,3 +34,7 @@ void inregister::fetch(){
         digitalWrite(this->clockPin, HIGH);
     }
 }
+
+unsigned int inregister::readValue(){
+    return this->result;
+}

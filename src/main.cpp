@@ -68,7 +68,7 @@ bool BtSelectRotondePressed = false;
 bool BtSelectFonctionPressed = false;
 bool BtSelectModified = false;
 bool BtItinerairePressed = false;
-bool BtItineraireNumero = 0;
+unsigned int BtItineraireNumero = 0;
 
 int etatEcran = 0;
 int lastEtatEcran = 0;
@@ -199,11 +199,14 @@ void updateBouton(){
   lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
   // Gestion des boutons itiléraires (à modifier plus tard)
   bool etatBoutonItineraire = false;
-  BtItineraireNumero = 0;
+  BtItineraireNumero = 100; // du moment que je n'ai pas 100 bouton ma logique fonctionne
   for(int i=0; i<16; i++){
     bool state = myRegister.readInput(i);
     BtItineraireNumero += state * (i+1);
     etatBoutonItineraire = etatBoutonItineraire || state;
+    if(state && BtItineraireNumero >= 100){
+      BtItineraireNumero = i;
+    }
   }
   BtItinerairePressed = false;
   if((etatBoutonItineraire != lastEtatBoutonItineraire) && !etatBoutonItineraire){
@@ -668,8 +671,8 @@ void majEcran(){
 
   } else if(etatEcran == 43){
 
-    // Retour sur l'écran 41, exécuter les changements d'aiguillage ici
-    etatEcran = 41;
+    // Retour sur l'écran 10, exécuter les changements d'aiguillage ici
+    etatEcran = 10;
 
   } else if(etatEcran == 50){
     // Initialisation de l'écran rotonde

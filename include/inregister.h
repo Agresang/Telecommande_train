@@ -6,6 +6,7 @@ class inregister{
     void Setup(int latchPin, int clockPin, int dataPin);
     bool readInput(int bitNumber);
     void fetch();
+    unsigned int readValue();
   private:
     int latchPin;
     int clockPin;
