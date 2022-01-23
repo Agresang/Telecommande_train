@@ -197,23 +197,21 @@ void updateBouton(){
   lastEtatBoutonSelectAiguillage = etatBoutonSelectAiguillage;
   lastEtatBoutonSelectRotonde = etatBoutonSelectRotonde;
   lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
-  // Gestion des boutons itiléraires (à modifier plus tard)
+  // Gestion des boutons itiléraires
   bool etatBoutonItineraire = false;
-  BtItineraireNumero = 100; // du moment que je n'ai pas 100 bouton ma logique fonctionne
-  for(int i=0; i<16; i++){
+  BtItineraireNumero = 0;
+  int i = 0;
+  while(i<16 && BtItineraireNumero == 0){
     bool state = myRegister.readInput(i);
     BtItineraireNumero += state * (i+1);
     etatBoutonItineraire = etatBoutonItineraire || state;
-    if(state && BtItineraireNumero >= 100){
-      BtItineraireNumero = i;
-    }
+    i++;
   }
   BtItinerairePressed = false;
-  if((etatBoutonItineraire != lastEtatBoutonItineraire) && !etatBoutonItineraire){
+  if((etatBoutonItineraire != lastEtatBoutonItineraire) && etatBoutonItineraire){
     BtItinerairePressed = true;
   }
   lastEtatBoutonItineraire = etatBoutonItineraire;
-  Serial.println(BtItineraireNumero);
 }
 
 void ecritValeur(lv_obj_t * lvglLabel, int valeur){
@@ -455,13 +453,13 @@ void majEcran(){
     lv_obj_align(arrowLine2, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
     // Label départ
     departLabel = lv_label_create(ecranItineraire, NULL);
-    lv_obj_align(departLabel, ecranItineraire, LV_ALIGN_CENTER, 70, 0);
+    lv_obj_align(departLabel, ecranItineraire, LV_ALIGN_CENTER, 0, -70);
     lv_label_set_text(departLabel, "----");
     lv_obj_add_style(departLabel, LV_OBJ_PART_MAIN, &style_big);
     lv_label_set_align(departLabel, LV_LABEL_ALIGN_CENTER);
     // Label arrivée
     arriveLabel = lv_label_create(ecranItineraire, NULL);
-    lv_obj_align(arriveLabel, ecranItineraire, LV_ALIGN_CENTER, 170, 0);
+    lv_obj_align(arriveLabel, ecranItineraire, LV_ALIGN_CENTER, 0, 70);
     lv_label_set_text(arriveLabel, "----");
     lv_obj_add_style(arriveLabel, LV_OBJ_PART_MAIN, &style_big);
     lv_label_set_align(arriveLabel, LV_LABEL_ALIGN_CENTER);
@@ -642,6 +640,11 @@ void majEcran(){
     encoderS.setCount(0);
     oldPosition = 0;
 
+    // Sélection d'un départ
+    char buff[10];
+    itineraire[BtItineraireNumero-1].toCharArray(buff, 10);
+    lv_label_set_text(departLabel, buff);
+
     // Passage à l'étape 41
     etatEcran = 41;
   } else if(etatEcran == 41){
@@ -650,26 +653,16 @@ void majEcran(){
     lastEtatEcran = etatEcran;
 
     if(BtItinerairePressed){
-      // Sélection d'un départ
+      // Sélection d'une arrivée
       char buff[10];
-      itineraire[BtItineraireNumero].toCharArray(buff, 10);
-      lv_label_set_text(departLabel, buff);
+      itineraire[BtItineraireNumero-1].toCharArray(buff, 10);
+      lv_label_set_text(arriveLabel, buff);
       etatEcran = 42;
     } else if(BtOKPressed){
       etatEcran = 10;
     }
   
   } else if(etatEcran == 42){
-
-    if(BtItinerairePressed){
-      // Sélection d'une arrivée
-      char buff[10];
-      itineraire[BtItineraireNumero].toCharArray(buff, 10);
-      lv_label_set_text(arriveLabel, buff);
-      etatEcran = 43;
-    }
-
-  } else if(etatEcran == 43){
 
     // Retour sur l'écran 10, exécuter les changements d'aiguillage ici
     etatEcran = 10;
