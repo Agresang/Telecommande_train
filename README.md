@@ -33,7 +33,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 # Prochaines étapes
 
 - Intégrer les écrans que j'avais dessiné :
-  - Itinéraire d'aiguillages (faire un fichier pour faire correspondre une combinaison de boutons et une liste d'aiguillage)
+  - Itinéraire d'aiguillages (faire un fichier pour faire correspondre une combinaison de boutons et une liste d'aiguillage + utiliser une système de tree pour sauvegarder les informations ?)
   - Idée pour économiser des entrées pour les boutons : faire un bouton pour chaque entrées puis un bouton pour 2 entrée (déjà utilisées auparavent). Ça revient un peu à un codage binaire au niveau des boutons
 - Ajouter la gestions des boutons avec les registres à décalage (ajouter des boutons à la maquette)
 - Ajouter un bouton d'arrêt d'urgence (trouver un bouton qui va bien)
