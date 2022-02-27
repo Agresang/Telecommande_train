@@ -1,0 +1,65 @@
+{"circuit":[
+    { "start":"A-gauche", "end":"1", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":0}},
+        {"aiguillage":{"num":6, "dir":0}},
+        {"aiguillage":{"num":8, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"2", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":0}},
+        {"aiguillage":{"num":6, "dir":0}},
+        {"aiguillage":{"num":8, "dir":1}},
+        {"aiguillage":{"num":9, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"3", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":0}},
+        {"aiguillage":{"num":6, "dir":0}},
+        {"aiguillage":{"num":8, "dir":1}},
+        {"aiguillage":{"num":9, "dir":1}}
+    ]},
+    { "start":"A-gauche", "end":"4", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"5", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":1}},
+        {"aiguillage":{"num":10, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"6", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":1}},
+        {"aiguillage":{"num":10, "dir":1}},
+        {"aiguillage":{"num":32, "dir":0}},
+        {"aiguillage":{"num":33, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"7", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":1}},
+        {"aiguillage":{"num":10, "dir":1}},
+        {"aiguillage":{"num":32, "dir":0}},
+        {"aiguillage":{"num":33, "dir":1}}
+    ]},
+    { "start":"A-gauche", "end":"8", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":1}},
+        {"aiguillage":{"num":10, "dir":1}},
+        {"aiguillage":{"num":32, "dir":1}},
+        {"aiguillage":{"num":33, "dir":1}},
+        {"aiguillage":{"num":34, "dir":0}}
+    ]},
+    { "start":"A-gauche", "end":"9", "trajectoire":[
+        {"aiguillage":{"num":5, "dir":1}},
+        {"aiguillage":{"num":6, "dir":1}},
+        {"aiguillage":{"num":7, "dir":1}},
+        {"aiguillage":{"num":10, "dir":1}},
+        {"aiguillage":{"num":32, "dir":1}},
+        {"aiguillage":{"num":33, "dir":1}},
+        {"aiguillage":{"num":34, "dir":1}},
+        {"aiguillage":{"num":35, "dir":1}}
+    ]}
+  ]}

@@ -11,6 +11,7 @@
 #include <SPIFFS.h>
 #include <SD.h>
 #include <rotonde.h>
+#include <ArduinoJson.h>
 
 #define BT_STOP               27
 #define BT_SELECT_MACHINE     16
@@ -139,6 +140,43 @@ lv_obj_t * arrowLine1;
 lv_obj_t * arrowLine2;
 lv_obj_t * departLabel;
 lv_obj_t * arriveLabel;
+
+bool trajectoire(){
+  //Ouverture du fichier
+  if(!SPIFFS.begin(true)){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return true;
+  }
+  File file = SPIFFS.open("/Machines.txt");
+  if(!file){
+    Serial.println("Failed to open file for reading");
+    return true;
+  }
+  char input[1024] = "";
+  int fileLength = file.available();
+  for(int i=0; i<fileLength; i++){
+    char lettre = file.read();
+    strncat(input, &lettre, 1);
+  }
+  file.close();
+  //Copie du fichier au format JSON
+  DynamicJsonDocument doc(4096);  // Capacité à recalculer en cas de modification du fichier
+  DeserializationError err = deserializeJson(doc, input);
+  if (err) {
+    Serial.print(F("deserializeJson() failed with code "));
+    Serial.println(err.f_str());
+    return true;
+  }
+  // Get a reference to the root object
+  JsonObject obj = doc.as<JsonObject>();
+  // Loop through all the key-value pairs in obj
+  for (JsonPair p : obj) {
+    p.key(); // is a JsonString
+    p.value(); // is a JsonVariant
+  }
+  //Exécution de la trajectoire
+  return false;
+}
 
 void updateEncoder(){
   //Lecture position codeur
@@ -663,7 +701,7 @@ void majEcran(){
     }
   
   } else if(etatEcran == 42){
-
+    trajectoire();
     // Retour sur l'écran 10, exécuter les changements d'aiguillage ici
     etatEcran = 10;
 
