@@ -34,8 +34,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages dans un fichier JSON en utilisant la librairie arduinojson (https://arduinojson.org/)
-    - créer le fichier (à continuer quand les tests de la librairie seront concluant)
-    - décoder le fichier (tester la fonction `trajectoire()`)
+    - compléter le fichier
     - rechercher un itinéraire dans le fichier
   - Idée pour économiser des entrées pour les boutons : faire un bouton pour chaque entrées puis un bouton pour 2 entrée (déjà utilisées auparavent). Ça revient un peu à un codage binaire au niveau des boutons
 - Ajouter la gestions des boutons avec les registres à décalage (ajouter des boutons à la maquette)

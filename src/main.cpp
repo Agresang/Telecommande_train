@@ -28,6 +28,8 @@
 #define TIME_SUBSCRIBE_RENOUVELLEMENT 60000
 #define TIME_ROTONDE_SELECT   500
 
+#define JSON_SIZE 4096
+
 // Initialisation codeur
 ESP32Encoder encoderH;  // Encodeur Half-quad
 ESP32Encoder encoderS;  // Encodeur Single-quad
@@ -147,12 +149,12 @@ bool trajectoire(){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return true;
   }
-  File file = SPIFFS.open("/Machines.txt");
+  File file = SPIFFS.open("/Trajectoires.json");
   if(!file){
     Serial.println("Failed to open file for reading");
     return true;
   }
-  char input[1024] = "";
+  char input[JSON_SIZE] = "";
   int fileLength = file.available();
   for(int i=0; i<fileLength; i++){
     char lettre = file.read();
@@ -160,7 +162,7 @@ bool trajectoire(){
   }
   file.close();
   //Copie du fichier au format JSON
-  DynamicJsonDocument doc(4096);  // Capacité à recalculer en cas de modification du fichier
+  DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
   DeserializationError err = deserializeJson(doc, input);
   if (err) {
     Serial.print(F("deserializeJson() failed with code "));
@@ -170,9 +172,23 @@ bool trajectoire(){
   // Get a reference to the root object
   JsonObject obj = doc.as<JsonObject>();
   // Loop through all the key-value pairs in obj
-  for (JsonPair p : obj) {
-    p.key(); // is a JsonString
-    p.value(); // is a JsonVariant
+  JsonArray circuit = obj["circuit"];
+  for(JsonObject traj : circuit){
+    const char* start = traj["start"];
+    const char* end = traj["end"];
+    JsonArray trajectoire = traj["trajectoire"].as<JsonArray>();
+    Serial.print("start: ");
+    Serial.print(start);
+    Serial.print(" end: ");
+    Serial.println(end);
+    for(JsonObject repo2 : trajectoire){
+      int aiguillage = repo2["num"];
+      bool direction = repo2["dir"];
+      Serial.print("aiguillage: ");
+      Serial.print(aiguillage);
+      Serial.print(" direction: ");
+      Serial.println(direction);
+    }
   }
   //Exécution de la trajectoire
   return false;
