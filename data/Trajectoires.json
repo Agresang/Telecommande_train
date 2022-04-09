@@ -1,35 +1,29 @@
 {"circuit":[
     { "start":"A-gauche", "end":"1", "trajectoire":[
         {"num":5, "dir":0},
-        {"num":6, "dir":0},
         {"num":8, "dir":0}
     ]},
     { "start":"A-gauche", "end":"2", "trajectoire":[
         {"num":5, "dir":0},
-        {"num":6, "dir":0},
         {"num":8, "dir":1},
         {"num":9, "dir":0}
     ]},
     { "start":"A-gauche", "end":"3", "trajectoire":[
         {"num":5, "dir":0},
-        {"num":6, "dir":0},
         {"num":8, "dir":1},
         {"num":9, "dir":1}
     ]},
     { "start":"A-gauche", "end":"4", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":0}
     ]},
     { "start":"A-gauche", "end":"5", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":1},
         {"num":10, "dir":0}
     ]},
     { "start":"A-gauche", "end":"6", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
         {"num":32, "dir":0},
@@ -37,7 +31,6 @@
     ]},
     { "start":"A-gauche", "end":"7", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
         {"num":32, "dir":0},
@@ -45,7 +38,6 @@
     ]},
     { "start":"A-gauche", "end":"8", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
         {"num":32, "dir":1},
@@ -54,12 +46,261 @@
     ]},
     { "start":"A-gauche", "end":"9", "trajectoire":[
         {"num":5, "dir":1},
-        {"num":6, "dir":1},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
         {"num":32, "dir":1},
         {"num":33, "dir":1},
         {"num":34, "dir":1},
         {"num":35, "dir":1}
+    ]},
+    { "start":"B-gauche", "end":"1", "trajectoire":[
+        {"num":6, "dir":1},
+        {"num":8, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"2", "trajectoire":[
+        {"num":6, "dir":1},
+        {"num":8, "dir":1},
+        {"num":9, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"3", "trajectoire":[
+        {"num":6, "dir":1},
+        {"num":8, "dir":1},
+        {"num":9, "dir":1}
+    ]},
+    { "start":"B-gauche", "end":"4", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"5", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":1},
+        {"num":10, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"6", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":1},
+        {"num":10, "dir":1},
+        {"num":32, "dir":0},
+        {"num":33, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"7", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":1},
+        {"num":10, "dir":1},
+        {"num":32, "dir":0},
+        {"num":33, "dir":1}
+    ]},
+    { "start":"B-gauche", "end":"8", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":1},
+        {"num":10, "dir":1},
+        {"num":32, "dir":1},
+        {"num":33, "dir":1},
+        {"num":34, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"9", "trajectoire":[
+        {"num":6, "dir":0},
+        {"num":7, "dir":1},
+        {"num":10, "dir":1},
+        {"num":32, "dir":1},
+        {"num":33, "dir":1},
+        {"num":34, "dir":1},
+        {"num":35, "dir":1}
+    ]},
+    { "start":"9", "end":"10", "trajectoire":[
+        {"num":35, "dir":0}
+    ]},
+    { "start":"A-droite", "end":"1", "trajectoire":[
+        {"num":26, "dir":1},
+        {"num":17, "dir":0},
+        {"num":18, "dir":1},
+        {"num":15, "dir":1}
+    ]},
+    { "start":"A-droite", "end":"2", "trajectoire":[
+        {"num":26, "dir":1},
+        {"num":17, "dir":0},
+        {"num":18, "dir":0},
+        {"num":16, "dir":0}
+    ]},
+    { "start":"A-droite", "end":"3", "trajectoire":[
+        {"num":26, "dir":1},
+        {"num":17, "dir":0},
+        {"num":18, "dir":0},
+        {"num":16, "dir":1},
+        {"num":14, "dir":0},
+        {"num":13, "dir":0}
+    ]},
+    { "start":"A-droite", "end":"4", "trajectoire":[
+        {"num":26, "dir":1},
+        {"num":17, "dir":0},
+        {"num":18, "dir":0},
+        {"num":16, "dir":1},
+        {"num":14, "dir":0},
+        {"num":13, "dir":1},
+        {"num":12, "dir":1},
+        {"num":11, "dir":0}
+    ]},
+    { "start":"A-droite", "end":"5", "trajectoire":[
+        {"num":26, "dir":1},
+        {"num":17, "dir":0},
+        {"num":18, "dir":0},
+        {"num":16, "dir":1},
+        {"num":14, "dir":0},
+        {"num":13, "dir":1},
+        {"num":12, "dir":1},
+        {"num":11, "dir":1}
+    ]},
+    { "start":"B-droite", "end":"1", "trajectoire":[
+        {"num":20, "dir":0},
+        {"num":19, "dir":1},
+        {"num":17, "dir":1},
+        {"num":18, "dir":1},
+        {"num":15, "dir":1}
+    ]},
+    { "start":"B-droite", "end":"2", "trajectoire":[
+        {"num":20, "dir":0},
+        {"num":19, "dir":1},
+        {"num":17, "dir":1},
+        {"num":18, "dir":0},
+        {"num":16, "dir":0}
+    ]},
+    { "start":"B-droite", "end":"3", "trajectoire":[
+        {"num":20, "dir":0},
+        {"num":19, "dir":0},
+        {"num":14, "dir":1},
+        {"num":13, "dir":0}
+    ]},
+    { "start":"B-droite", "end":"4", "trajectoire":[
+        {"num":20, "dir":0},
+        {"num":19, "dir":0},
+        {"num":14, "dir":1},
+        {"num":13, "dir":1},
+        {"num":12, "dir":0},
+        {"num":11, "dir":1}
+    ]},
+    { "start":"B-droite", "end":"5", "trajectoire":[
+        {"num":20, "dir":0},
+        {"num":19, "dir":0},
+        {"num":14, "dir":1},
+        {"num":13, "dir":1},
+        {"num":12, "dir":1},
+        {"num":11, "dir":1}
+    ]},
+    { "start":"SERVICE", "end":"4", "trajectoire":[
+        {"num":24, "dir":0},
+        {"num":12, "dir":0},
+        {"num":11, "dir":0}
+    ]},
+    { "start":"SERVICE", "end":"5", "trajectoire":[
+        {"num":24, "dir":0},
+        {"num":12, "dir":1},
+        {"num":11, "dir":0}
+    ]},
+    { "start":"SERVICE", "end":"B-droite", "trajectoire":[
+        {"num":21, "dir":0},
+        {"num":20, "dir":1}
+    ]},
+    { "start":"ROT", "end":"4", "trajectoire":[
+        {"num":24, "dir":1},
+        {"num":12, "dir":0},
+        {"num":11, "dir":0}
+    ]},
+    { "start":"ROT", "end":"5", "trajectoire":[
+        {"num":24, "dir":1},
+        {"num":12, "dir":1},
+        {"num":11, "dir":0}
+    ]},
+    { "start":"ROT", "end":"6", "trajectoire":[
+        {"num":22, "dir":0},
+        {"num":23, "dir":0}
+    ]},
+    { "start":"ROT", "end":"7", "trajectoire":[
+        {"num":22, "dir":0},
+        {"num":23, "dir":1}
+    ]},
+    { "start":"ROT", "end":"8", "trajectoire":[
+        {"num":22, "dir":1}
+    ]},
+    { "start":"ROT", "end":"B-droite", "trajectoire":[
+        {"num":20, "dir":1},
+        {"num":21, "dir":1}
+    ]},
+    { "start":"GareCach1", "end":"1", "trajectoire":[
+        {"num":25, "dir":1},
+        {"num":15, "dir":0}
+    ]},
+    { "start":"GareCach1", "end":"A", "trajectoire":[
+        {"num":27, "dir":1},
+        {"num":26, "dir":0}
+    ]},
+    { "start":"GareCach2", "end":"1", "trajectoire":[
+        {"num":28, "dir":1},
+        {"num":25, "dir":0},
+        {"num":15, "dir":0}
+    ]},
+    { "start":"GareCach2", "end":"A", "trajectoire":[
+        {"num":28, "dir":1},
+        {"num":27, "dir":0},
+        {"num":26, "dir":0}
+    ]},
+    { "start":"GareCach2", "end":"GareCach3", "trajectoire":[
+        {"num":28, "dir":0}
+    ]},
+    { "start":"GareCach3", "end":"1", "trajectoire":[
+        {"num":28, "dir":0},
+        {"num":25, "dir":0},
+        {"num":15, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"B-droite", "trajectoire":[
+        {"num":30, "dir":0},
+        {"num":31, "dir":0}
+    ]},
+    { "start":"B-gauche", "end":"D", "trajectoire":[
+        {"num":30, "dir":0},
+        {"num":31, "dir":1}
+    ]},
+    { "start":"B-droite", "end":"C", "trajectoire":[
+        {"num":30, "dir":1},
+        {"num":31, "dir":0}
+    ]},
+    { "start":"C", "end":"D", "trajectoire":[
+        {"num":30, "dir":1},
+        {"num":31, "dir":1}
+    ]},
+    { "start":"C", "end":"M1", "trajectoire":[
+        {"num":40, "dir":0},
+        {"num":41, "dir":0}
+    ]},
+    { "start":"C", "end":"M2", "trajectoire":[
+        {"num":40, "dir":1},
+        {"num":41, "dir":0}
+    ]},
+    { "start":"C", "end":"M3", "trajectoire":[
+        {"num":40, "dir":1},
+        {"num":41, "dir":1}
+    ]},
+    { "start":"D", "end":"M1", "trajectoire":[
+        {"num":36, "dir":1}
+    ]},
+    { "start":"D", "end":"M2", "trajectoire":[
+        {"num":36, "dir":0},
+        {"num":37, "dir":0}
+    ]},
+    { "start":"D", "end":"M3", "trajectoire":[
+        {"num":36, "dir":0},
+        {"num":37, "dir":1},
+        {"num":38, "dir":0},
+        {"num":39, "dir":0}
+    ]},
+    { "start":"D", "end":"M4", "trajectoire":[
+        {"num":36, "dir":0},
+        {"num":37, "dir":1},
+        {"num":38, "dir":0},
+        {"num":39, "dir":1}
+    ]},
+    { "start":"D", "end":"M5", "trajectoire":[
+        {"num":36, "dir":0},
+        {"num":37, "dir":1},
+        {"num":38, "dir":1}
     ]}
   ]}
