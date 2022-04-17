@@ -28,7 +28,12 @@
 #define TIME_SUBSCRIBE_RENOUVELLEMENT 60000
 #define TIME_ROTONDE_SELECT   500
 
-#define JSON_SIZE 4096
+#define JSON_SIZE 16384
+
+// Augmentation du stack pour éviter un stack overflow dû à l'ouverture d'un gros fichier JSON
+#if !(USING_DEFAULT_ARDUINO_LOOP_STACK_SIZE)
+  uint16_t USER_CONFIG_ARDUINO_LOOP_STACK_SIZE = 32768;
+#endif
 
 // Initialisation codeur
 ESP32Encoder encoderH;  // Encodeur Half-quad
@@ -53,9 +58,12 @@ unsigned long etatFonctions = 0;
 byte etatCircuit = 1;
 byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente retour information   2: Information disponible
 int numStationRotonde = 0;
-short stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14,16};
-short fonctionRotonde[] = {1,16,2,3,19,20,4,5,6,7,8,9,10,14};
-String  itineraire[] = {"A-gauche", "B-gauche", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A-droite", "B-droite", "C", "D", "1-ile", "2-ile", "3-ile", "4-ile", "5-ile", "ROTONDE", "SERVICE"};
+ushort stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14,16};
+ushort fonctionRotonde[] = {1,16,2,3,19,20,4,5,6,7,8,9,10,14};
+String  listeItineraire[] = {"A-gauche", "B-gauche", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A-droite", "B-droite", "C", "D", "1-ile", "2-ile", "3-ile", "4-ile", "5-ile", "ROTONDE", "SERVICE"};
+unsigned short itineraire[10];
+bool itineraireDirection[10];
+unsigned short compteurItineraire;
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
 bool lastEtatBoutonOK = true;
@@ -72,6 +80,7 @@ bool BtSelectFonctionPressed = false;
 bool BtSelectModified = false;
 bool BtItinerairePressed = false;
 unsigned int BtItineraireNumero = 0;
+DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
 
 int etatEcran = 0;
 int lastEtatEcran = 0;
@@ -143,16 +152,16 @@ lv_obj_t * arrowLine2;
 lv_obj_t * departLabel;
 lv_obj_t * arriveLabel;
 
-bool trajectoire(){
+bool readTrajectoireFile(){
   //Ouverture du fichier
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
-    return true;
+    return false;
   }
   File file = SPIFFS.open("/Trajectoires.json");
   if(!file){
     Serial.println("Failed to open file for reading");
-    return true;
+    return false;
   }
   char input[JSON_SIZE] = "";
   int fileLength = file.available();
@@ -161,36 +170,49 @@ bool trajectoire(){
     strncat(input, &lettre, 1);
   }
   file.close();
+  SPIFFS.end();
   //Copie du fichier au format JSON
-  DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
   DeserializationError err = deserializeJson(doc, input);
   if (err) {
     Serial.print(F("deserializeJson() failed with code "));
     Serial.println(err.f_str());
-    return true;
+    return false;
   }
-  // Get a reference to the root object
+  return true;
+}
+
+bool trajectoire(char* depart, char* arrivee){
+  //Référence à l'objet racine
   JsonObject obj = doc.as<JsonObject>();
-  // Loop through all the key-value pairs in obj
   JsonArray circuit = obj["circuit"];
+  //Boucle dans le tableau des trajectoires et recherche des départs/arrivées
   for(JsonObject traj : circuit){
     const char* start = traj["start"];
     const char* end = traj["end"];
-    JsonArray trajectoire = traj["trajectoire"].as<JsonArray>();
-    Serial.print("start: ");
-    Serial.print(start);
-    Serial.print(" end: ");
-    Serial.println(end);
-    for(JsonObject repo2 : trajectoire){
-      int aiguillage = repo2["num"];
-      bool direction = repo2["dir"];
-      Serial.print("aiguillage: ");
-      Serial.print(aiguillage);
-      Serial.print(" direction: ");
-      Serial.println(direction);
+    if((strcmp(start,depart)==0 && strcmp(end,arrivee)==0) || (strcmp(start,arrivee)==0 && strcmp(end,depart)==0)){
+      // Association départ/arrivée trouvée, on parcour maintenant la liste des aiguillages
+      JsonArray trajectoire = traj["trajectoire"].as<JsonArray>();
+      Serial.print("Trajectoire trouvée start: ");
+      Serial.print(start);
+      Serial.print(" end: ");
+      Serial.println(end);
+      Serial.println("Trajectoire à réaliser");
+      int i=0;
+      for(JsonObject repo2 : trajectoire){
+        int aiguillage = repo2["num"];
+        bool direction = repo2["dir"];
+        itineraire[i] = aiguillage;
+        itineraireDirection[i] = direction;
+        i++;
+        Serial.print("aiguillage: ");
+        Serial.print(aiguillage);
+        Serial.print(" direction: ");
+        Serial.println(direction);
+      }
+      return true; // Itinéraire trouvé
     }
   }
-  //Exécution de la trajectoire
+  //Itinéraire non trouvé
   return false;
 }
 
@@ -368,6 +390,7 @@ void majEcran(){
       strncat(listMachines, &lettre, 1);
     }
     file.close();
+    SPIFFS.end();
     //Serial.println(listMachines);
     lv_roller_set_options(rollerMachine,
                         listMachines,
@@ -696,7 +719,7 @@ void majEcran(){
 
     // Sélection d'un départ
     char buff[10];
-    itineraire[BtItineraireNumero-1].toCharArray(buff, 10);
+    listeItineraire[BtItineraireNumero-1].toCharArray(buff, 10);
     lv_label_set_text(departLabel, buff);
 
     // Passage à l'étape 41
@@ -709,7 +732,7 @@ void majEcran(){
     if(BtItinerairePressed){
       // Sélection d'une arrivée
       char buff[10];
-      itineraire[BtItineraireNumero-1].toCharArray(buff, 10);
+      listeItineraire[BtItineraireNumero-1].toCharArray(buff, 10);
       lv_label_set_text(arriveLabel, buff);
       etatEcran = 42;
     } else if(BtOKPressed){
@@ -717,7 +740,9 @@ void majEcran(){
     }
   
   } else if(etatEcran == 42){
-    trajectoire();
+    char* depatText = lv_label_get_text(departLabel);
+    char* arriveeText = lv_label_get_text(arriveLabel);
+    trajectoire(depatText,arriveeText);
     // Retour sur l'écran 10, exécuter les changements d'aiguillage ici
     etatEcran = 10;
 
@@ -926,6 +951,9 @@ void setup()
 
     // Affichage écran acceuil
     majEcran();
+
+    // Lecture fichier Trajectoires. A faire avant d'utiliser la wifi
+    readTrajectoireFile();
 
     // Connexion Wifi
     WiFi.begin(ssid, password);
