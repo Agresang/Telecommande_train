@@ -1,15 +1,18 @@
 {"circuit":[
     { "start":"A-gauche", "end":"1", "trajectoire":[
         {"num":5, "dir":0},
+        {"num":6, "dir":0},
         {"num":8, "dir":0}
     ]},
     { "start":"A-gauche", "end":"2", "trajectoire":[
         {"num":5, "dir":0},
+        {"num":6, "dir":0},
         {"num":8, "dir":1},
         {"num":9, "dir":0}
     ]},
     { "start":"A-gauche", "end":"3", "trajectoire":[
         {"num":5, "dir":0},
+        {"num":6, "dir":0},
         {"num":8, "dir":1},
         {"num":9, "dir":1}
     ]},
@@ -68,15 +71,18 @@
         {"num":9, "dir":1}
     ]},
     { "start":"B-gauche", "end":"4", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":0}
     ]},
     { "start":"B-gauche", "end":"5", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":1},
         {"num":10, "dir":0}
     ]},
     { "start":"B-gauche", "end":"6", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
@@ -84,6 +90,7 @@
         {"num":33, "dir":0}
     ]},
     { "start":"B-gauche", "end":"7", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
@@ -91,6 +98,7 @@
         {"num":33, "dir":1}
     ]},
     { "start":"B-gauche", "end":"8", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
@@ -99,6 +107,7 @@
         {"num":34, "dir":0}
     ]},
     { "start":"B-gauche", "end":"9", "trajectoire":[
+        {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":7, "dir":1},
         {"num":10, "dir":1},
@@ -127,7 +136,7 @@
         {"num":17, "dir":0},
         {"num":18, "dir":0},
         {"num":16, "dir":1},
-        {"num":14, "dir":0},
+        {"num":14, "dir":1},
         {"num":13, "dir":0}
     ]},
     { "start":"A-droite", "end":"4", "trajectoire":[
@@ -135,17 +144,17 @@
         {"num":17, "dir":0},
         {"num":18, "dir":0},
         {"num":16, "dir":1},
-        {"num":14, "dir":0},
+        {"num":14, "dir":1},
         {"num":13, "dir":1},
-        {"num":12, "dir":1},
-        {"num":11, "dir":0}
+        {"num":12, "dir":0},
+        {"num":11, "dir":1}
     ]},
     { "start":"A-droite", "end":"5", "trajectoire":[
         {"num":26, "dir":1},
         {"num":17, "dir":0},
         {"num":18, "dir":0},
         {"num":16, "dir":1},
-        {"num":14, "dir":0},
+        {"num":14, "dir":1},
         {"num":13, "dir":1},
         {"num":12, "dir":1},
         {"num":11, "dir":1}
@@ -167,13 +176,13 @@
     { "start":"B-droite", "end":"3", "trajectoire":[
         {"num":20, "dir":0},
         {"num":19, "dir":0},
-        {"num":14, "dir":1},
+        {"num":14, "dir":0},
         {"num":13, "dir":0}
     ]},
     { "start":"B-droite", "end":"4", "trajectoire":[
         {"num":20, "dir":0},
         {"num":19, "dir":0},
-        {"num":14, "dir":1},
+        {"num":14, "dir":0},
         {"num":13, "dir":1},
         {"num":12, "dir":0},
         {"num":11, "dir":1}
@@ -181,7 +190,7 @@
     { "start":"B-droite", "end":"5", "trajectoire":[
         {"num":20, "dir":0},
         {"num":19, "dir":0},
-        {"num":14, "dir":1},
+        {"num":14, "dir":0},
         {"num":13, "dir":1},
         {"num":12, "dir":1},
         {"num":11, "dir":1}

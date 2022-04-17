@@ -23,7 +23,7 @@
 #define CLOCK_PIN             33
 #define DATA_PIN              34
 
-#define TIME_AIGUILLAGE_SELECT  1000
+#define TIME_AIGUILLAGE_SELECT  200
 #define TIME_RESET  500
 #define TIME_SUBSCRIBE_RENOUVELLEMENT 60000
 #define TIME_ROTONDE_SELECT   500
@@ -740,11 +740,43 @@ void majEcran(){
     }
   
   } else if(etatEcran == 42){
+    // Détermination de la séquence d'aiguillage
     char* depatText = lv_label_get_text(departLabel);
     char* arriveeText = lv_label_get_text(arriveLabel);
     trajectoire(depatText,arriveeText);
-    // Retour sur l'écran 10, exécuter les changements d'aiguillage ici
-    etatEcran = 10;
+    // Passage à l'étape suivante
+    etatEcran = 43;
+
+  } else if(etatEcran == 43){
+    // Changement d'état d'un aiguillage
+    unsigned short aiguillageNumber = itineraire[0];
+    bool aiguillageDirection = itineraireDirection[0];
+    Serial.print("Aiguillage: ");
+    Serial.print(aiguillageNumber);
+    Serial.print(" Direction: ");
+    Serial.println(aiguillageDirection);
+    myZ21.SelectAiguillage(aiguillageNumber);
+    myZ21.SendAiguillageCommand(aiguillageDirection, true);
+    myZ21.SendAiguillageCommand(aiguillageDirection, false);
+    timerAiguillage = millis() + TIME_AIGUILLAGE_SELECT;
+    // On attend à l'étape suivante
+    etatEcran = 44;
+
+  } else if(etatEcran == 44){
+    // Attente entre chaque changement d'aiguillage
+    // Retour sur à 43 s'il reste un aiguillage dans la liste, sinon on part en 10
+    if(millis() > timerAiguillage){
+      //Décalage de l'itinéraire
+      for(int i=0; i<9; i++){
+        itineraire[i] = itineraire[i+1];
+        itineraireDirection[i] = itineraireDirection[i+1];
+      }
+      if(itineraire[0] > 0){
+        etatEcran = 43;
+      } else {
+        etatEcran = 10;
+      }
+    }
 
   } else if(etatEcran == 50){
     // Initialisation de l'écran rotonde
