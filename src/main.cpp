@@ -721,6 +721,7 @@ void majEcran(){
     char buff[10];
     listeItineraire[BtItineraireNumero-1].toCharArray(buff, 10);
     lv_label_set_text(departLabel, buff);
+    lv_label_set_text(arriveLabel, "------");
 
     // Passage à l'étape 41
     etatEcran = 41;

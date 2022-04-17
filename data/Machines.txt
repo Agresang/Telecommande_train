@@ -11,6 +11,12 @@ Vapeur 232U1
 Vapeur 141TA
 Autorail RGP2700
 Dies/Elec 72085
-Vapeur 141TB
+Vapeur 141TA
 Autorail Bugatti
 Rotonde
+Dies/Elec 67534
+Vapeur 230
+Vapeur 130TB
+Locotract. Brawa
+Vap. 030TU Nantes
+Vap. 141TA Bleue
