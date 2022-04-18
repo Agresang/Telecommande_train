@@ -22,6 +22,7 @@
 #define LATCH_PIN             32
 #define CLOCK_PIN             33
 #define DATA_PIN              34
+#define BT_ARRET_URGENCE      4
 
 #define TIME_AIGUILLAGE_SELECT  200
 #define TIME_RESET  500
@@ -71,6 +72,7 @@ bool lastEtatBoutonSelectAiguillage = true;
 bool lastEtatBoutonSelectRotonde = true;
 bool lastEtatBoutonSelectFonction = true;
 bool lastEtatBoutonItineraire = true;
+bool lastEtatAU = true;
 bool BtStopPressed = false;
 bool BtSelectMachinePressed = false;
 bool BtOKPressed = false;
@@ -79,6 +81,7 @@ bool BtSelectRotondePressed = false;
 bool BtSelectFonctionPressed = false;
 bool BtSelectModified = false;
 bool BtItinerairePressed = false;
+bool BtAUPressed = false;
 unsigned int BtItineraireNumero = 0;
 DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
 
@@ -241,6 +244,7 @@ void updateBouton(){
   bool etatBoutonSelectAiguillage = digitalRead(BT_SELECT_AIGUILLAGE);
   bool etatBoutonSelectRotonde = digitalRead(BT_SELECT_ROTONDE);
   bool etatBoutonSelectFonction = digitalRead(BT_SELECT_FONCTION);
+  bool etatBoutonAU = digitalRead(BT_ARRET_URGENCE);
   // Initialisation One Shot
   BtStopPressed = false;
   BtSelectMachinePressed = false;
@@ -248,6 +252,7 @@ void updateBouton(){
   BtSelectAiguillagePressed = false;
   BtSelectRotondePressed = false;
   BtSelectFonctionPressed = false;
+  BtAUPressed = false;
   // Détection front montant
   if((etatBoutonSelectMachine != lastEtatBoutonSelectMachine) && !etatBoutonSelectMachine){
     BtSelectMachinePressed = true;
@@ -267,6 +272,9 @@ void updateBouton(){
   if((etatBoutonStop != lastEtatBoutonStop) && !etatBoutonStop){
     BtStopPressed = true;
   }
+  if((etatBoutonAU != lastEtatAU) && !etatBoutonAU){
+    BtAUPressed = true;
+  }
   // MAJ état précédent
   lastEtatBoutonStop = etatBoutonStop;
   lastEtatBoutonSelectMachine = etatBoutonSelectMachine;
@@ -274,6 +282,7 @@ void updateBouton(){
   lastEtatBoutonSelectAiguillage = etatBoutonSelectAiguillage;
   lastEtatBoutonSelectRotonde = etatBoutonSelectRotonde;
   lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
+  lastEtatAU = etatBoutonAU;
   // Gestion des boutons itiléraires
   bool etatBoutonItineraire = false;
   BtItineraireNumero = 0;
@@ -578,6 +587,12 @@ void majEcran(){
     // Arrêt sur un appuie du bouton STOP
     if(BtStopPressed){
       encoderH.setCount(0);
+    }
+
+    // Arrêt d'urgence
+    if(BtAUPressed){
+      myZ21.stopTrackPower();
+      Serial.println("Arrêt puissance");
     }
 
     //Modification de la vitesse si on tourne la roue
@@ -893,7 +908,7 @@ void majEcran(){
     encoderS.setCount(0);
     oldPosition = 0;
 
-    //Passage à l'étape 61
+    //Passage à l'étape 71
     etatEcran = 71;
   } else if(etatEcran == 71){
     // Maintient de la pop-up court-jus
@@ -951,6 +966,7 @@ void setup()
     pinMode(BT_SELECT_AIGUILLAGE, INPUT_PULLUP);
     pinMode(BT_SELECT_ROTONDE, INPUT_PULLUP);
     pinMode(BT_SELECT_FONCTION, INPUT_PULLUP);
+    pinMode(BT_ARRET_URGENCE, INPUT_PULLUP);
 
     // Initialisation registres à décalage d'entré
     myRegister.Setup(LATCH_PIN, CLOCK_PIN, DATA_PIN);

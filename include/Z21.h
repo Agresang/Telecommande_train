@@ -18,6 +18,7 @@ class Z21{
     byte getAiguillageState();
     void askAiguillageInfo();
     byte getCircuitState();
+    void stopTrackPower();
     void resetTrackPower();
     void SendMachineFunctionCommand(byte numFonction, bool etat);
     bool GetMachineFunctionState(int numFunction);

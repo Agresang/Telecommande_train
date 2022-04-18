@@ -24,7 +24,7 @@
  - 32 : Latch registres à décalage
  - 33 : Clock registres à décalage
  - 34 : Data registres à décalage
- - 35 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
+ - 4 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
 
 # Mise à jour liste machines
 
@@ -35,7 +35,8 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 - Intégrer les écrans que j'avais dessiné :
   - Itinéraire d'aiguillages dans un fichier JSON en utilisant la librairie arduinojson (https://arduinojson.org/)
     - Tester les trajectoires de l'îlot central
-  - Idée pour économiser des entrées pour les boutons : faire un bouton pour chaque entrées puis un bouton pour 2 entrée (déjà utilisées auparavent). Ça revient un peu à un codage binaire au niveau des boutons
 - Ajouter la gestions des boutons avec les registres à décalage (ajouter des boutons à la maquette)
+  - Besoin de 8 boutons pour les itinéraires
+  - Besoin d'encore plus de boutons pour de futures extensions
 - Ajouter un bouton d'arrêt d'urgence (trouver un bouton qui va bien)
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages

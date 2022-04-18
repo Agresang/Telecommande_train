@@ -215,6 +215,20 @@ byte Z21::getCircuitState(){
   return etatCircuit;
 }
 
+void Z21::stopTrackPower(){
+  byte commandeResetTrackPowerLength = 7;
+  byte commandeResetTrackPower[7];
+  commandeResetTrackPower[0] = 0x07;
+  commandeResetTrackPower[1] = 0x0;
+  commandeResetTrackPower[2] = 0x40;
+  commandeResetTrackPower[3] = 0x0;
+  commandeResetTrackPower[4] = 0x21;
+  commandeResetTrackPower[5] = 0x80;
+  commandeResetTrackPower[6] = 0xa0;
+  // Envoie packet
+  sendPacket(commandeResetTrackPower, commandeResetTrackPowerLength);
+}
+
 void Z21::resetTrackPower(){
   byte commandeResetTrackPowerLength = 7;
   byte commandeResetTrackPower[7];
