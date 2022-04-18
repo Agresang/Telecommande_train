@@ -85,6 +85,7 @@ DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modifi
 int etatEcran = 0;
 int lastEtatEcran = 0;
 bool ecranProcessComplete = true;
+bool forceScreenUpdate = false;
 
 unsigned long timer = 0;
 unsigned long timerAiguillage = 0;
@@ -192,11 +193,11 @@ bool trajectoire(char* depart, char* arrivee){
     if((strcmp(start,depart)==0 && strcmp(end,arrivee)==0) || (strcmp(start,arrivee)==0 && strcmp(end,depart)==0)){
       // Association départ/arrivée trouvée, on parcour maintenant la liste des aiguillages
       JsonArray trajectoire = traj["trajectoire"].as<JsonArray>();
-      Serial.print("Trajectoire trouvée start: ");
-      Serial.print(start);
-      Serial.print(" end: ");
-      Serial.println(end);
-      Serial.println("Trajectoire à réaliser");
+      // Serial.print("Trajectoire trouvée start: ");
+      // Serial.print(start);
+      // Serial.print(" end: ");
+      // Serial.println(end);
+      // Serial.println("Trajectoire à réaliser");
       int i=0;
       for(JsonObject repo2 : trajectoire){
         int aiguillage = repo2["num"];
@@ -204,10 +205,10 @@ bool trajectoire(char* depart, char* arrivee){
         itineraire[i] = aiguillage;
         itineraireDirection[i] = direction;
         i++;
-        Serial.print("aiguillage: ");
-        Serial.print(aiguillage);
-        Serial.print(" direction: ");
-        Serial.println(direction);
+        // Serial.print("aiguillage: ");
+        // Serial.print(aiguillage);
+        // Serial.print(" direction: ");
+        // Serial.println(direction);
       }
       return true; // Itinéraire trouvé
     }
@@ -516,13 +517,13 @@ void majEcran(){
     // Ecran itinéraire
     ecranItineraire = lv_obj_create(NULL, NULL);
     // Dessin de la fèche
-    static lv_point_t arrowPoints1[] = { {100, 120}, {140, 120}, {135, 125} };
+    static lv_point_t arrowPoints1[] = { {120, 140}, {120, 100}, {125, 105} };
     arrowLine1 = lv_line_create(ecranItineraire, NULL);
     lv_line_set_y_invert(arrowLine1, true);
     lv_line_set_points(arrowLine1, arrowPoints1, 3);
     lv_obj_add_style(arrowLine1, LV_LINE_PART_MAIN, &style_line);
     lv_obj_align(arrowLine1, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
-    static lv_point_t arrowPoints2[] = { {140, 120}, {135, 115} };
+    static lv_point_t arrowPoints2[] = { {120, 100}, {115, 105} };
     arrowLine2 = lv_line_create(ecranItineraire, NULL);
     lv_line_set_y_invert(arrowLine2, true);
     lv_line_set_points(arrowLine2, arrowPoints2, 2);
@@ -530,13 +531,13 @@ void majEcran(){
     lv_obj_align(arrowLine2, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
     // Label départ
     departLabel = lv_label_create(ecranItineraire, NULL);
-    lv_obj_align(departLabel, ecranItineraire, LV_ALIGN_CENTER, 0, -70);
+    lv_obj_align(departLabel, ecranItineraire, LV_ALIGN_IN_TOP_MID, -20, 20);
     lv_label_set_text(departLabel, "----");
     lv_obj_add_style(departLabel, LV_OBJ_PART_MAIN, &style_big);
     lv_label_set_align(departLabel, LV_LABEL_ALIGN_CENTER);
     // Label arrivée
     arriveLabel = lv_label_create(ecranItineraire, NULL);
-    lv_obj_align(arriveLabel, ecranItineraire, LV_ALIGN_CENTER, 0, 70);
+    lv_obj_align(arriveLabel, ecranItineraire, LV_ALIGN_IN_BOTTOM_MID, -20, -20);
     lv_label_set_text(arriveLabel, "----");
     lv_obj_add_style(arriveLabel, LV_OBJ_PART_MAIN, &style_big);
     lv_label_set_align(arriveLabel, LV_LABEL_ALIGN_CENTER);
@@ -746,16 +747,20 @@ void majEcran(){
     char* arriveeText = lv_label_get_text(arriveLabel);
     trajectoire(depatText,arriveeText);
     // Passage à l'étape suivante
-    etatEcran = 43;
+    if(itineraire[0] > 0){
+      etatEcran = 43;
+    } else {
+      etatEcran = 10;
+    }
 
   } else if(etatEcran == 43){
     // Changement d'état d'un aiguillage
     unsigned short aiguillageNumber = itineraire[0];
     bool aiguillageDirection = itineraireDirection[0];
-    Serial.print("Aiguillage: ");
-    Serial.print(aiguillageNumber);
-    Serial.print(" Direction: ");
-    Serial.println(aiguillageDirection);
+    // Serial.print("Aiguillage: ");
+    // Serial.print(aiguillageNumber);
+    // Serial.print(" Direction: ");
+    // Serial.println(aiguillageDirection);
     myZ21.SelectAiguillage(aiguillageNumber);
     myZ21.SendAiguillageCommand(aiguillageDirection, true);
     myZ21.SendAiguillageCommand(aiguillageDirection, false);
@@ -927,7 +932,7 @@ void majEcran(){
 void majLVGL(void * parameter){
   // Synchro avec la gestion de l'écran qui tourne en parallèle
   while (true){
-    if(not ecranProcessComplete){
+    if(not ecranProcessComplete || forceScreenUpdate){
       lv_task_handler();
       ecranProcessComplete = true;
     }
@@ -985,7 +990,11 @@ void setup()
     // Affichage écran acceuil
     majEcran();
 
+    // Ajout tâche parallèle pour la gestion de l'écran
+    xTaskCreatePinnedToCore(majLVGL,"MAJ Ecran",25000,NULL,1,NULL,0);
+
     // Lecture fichier Trajectoires. A faire avant d'utiliser la wifi
+    forceScreenUpdate = true; // Forçage de la mise à jour de l'écran
     readTrajectoireFile();
 
     // Connexion Wifi
@@ -993,16 +1002,13 @@ void setup()
     Serial.print("Connexion Wifi");
     while (WiFi.status() != WL_CONNECTED) {
       delay(10);
-      lv_task_handler();
     }
+    forceScreenUpdate = false; // Arrêt forçage de la mise à jour de l'écran
     ArduinoOTA.begin();
     myZ21.Setup(ipAdress, localPort);
     myZ21.SelectMachine(numMachine);
     myZ21.SelectAiguillage(numAiguillage);
     myZ21.SubscribeInfo();
-
-    // Ajout tâche parallèle pour la gestion de l'écran
-    xTaskCreatePinnedToCore(majLVGL,"MAJ Ecran",25000,NULL,1,NULL,0);
 }
 
 void loop()
