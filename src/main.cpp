@@ -32,6 +32,8 @@
 #define JSON_SIZE 16384
 
 // Augmentation du stack pour éviter un stack overflow dû à l'ouverture d'un gros fichier JSON
+// Voir le poste de khoih.prog : https://community.platformio.org/t/esp32-stack-configuration-reloaded/20994/4
+// Modifier le fichier C:\Users\antoi\.platformio\packages\framework-arduinoespressif32\cores\esp32\main.cpp
 #if !(USING_DEFAULT_ARDUINO_LOOP_STACK_SIZE)
   uint16_t USER_CONFIG_ARDUINO_LOOP_STACK_SIZE = 32768;
 #endif
@@ -61,7 +63,7 @@ byte premiereInfoMachine = 0;     // 0: Pas besoin d'information  1: Attente ret
 int numStationRotonde = 0;
 ushort stationRotonde[] = {32,33,34,36,37,38,40,8,9,10,12,13,14,16};
 ushort fonctionRotonde[] = {1,16,2,3,19,20,4,5,6,7,8,9,10,14};
-String  listeItineraire[] = {"A-gauche", "B-gauche", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A-droite", "B-droite", "C", "D", "1-ile", "2-ile", "3-ile", "4-ile", "5-ile", "ROTONDE", "SERVICE"};
+String  listeItineraire[] = {"A-gauche", "B-gauche", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A-droite", "B-droite", "C", "D", "ilot-1", "ilot-2", "ilot-3", "ilot-4", "ilot-5", "ROTONDE", "SERVICE", "GareCach1", "GareCach2", "GareCach3", "GareCach4"};
 unsigned short itineraire[10];
 bool itineraireDirection[10];
 unsigned short compteurItineraire;
@@ -82,7 +84,7 @@ bool BtSelectFonctionPressed = false;
 bool BtSelectModified = false;
 bool BtItinerairePressed = false;
 bool BtAUPressed = false;
-unsigned int BtItineraireNumero = 0;
+unsigned long BtItineraireNumero = 0;
 DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
 
 int etatEcran = 0;
@@ -287,7 +289,7 @@ void updateBouton(){
   bool etatBoutonItineraire = false;
   BtItineraireNumero = 0;
   int i = 0;
-  while(i<16 && BtItineraireNumero == 0){
+  while(i<32 && not etatBoutonItineraire){
     bool state = myRegister.readInput(i);
     BtItineraireNumero += state * (i+1);
     etatBoutonItineraire = etatBoutonItineraire || state;

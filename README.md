@@ -32,11 +32,4 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 # Prochaines étapes
 
-- Intégrer les écrans que j'avais dessiné :
-  - Itinéraire d'aiguillages dans un fichier JSON en utilisant la librairie arduinojson (https://arduinojson.org/)
-    - Tester les trajectoires de l'îlot central
-- Ajouter la gestions des boutons avec les registres à décalage (ajouter des boutons à la maquette)
-  - Besoin de 8 boutons pour les itinéraires
-  - Besoin d'encore plus de boutons pour de futures extensions
-- Ajouter un bouton d'arrêt d'urgence (trouver un bouton qui va bien)
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages

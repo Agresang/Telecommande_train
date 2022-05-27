@@ -2,19 +2,22 @@
     { "start":"A-gauche", "end":"1", "trajectoire":[
         {"num":5, "dir":0},
         {"num":6, "dir":0},
-        {"num":8, "dir":0}
+        {"num":8, "dir":0},
+        {"num":42, "dir":0}
     ]},
     { "start":"A-gauche", "end":"2", "trajectoire":[
         {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":8, "dir":1},
-        {"num":9, "dir":0}
+        {"num":9, "dir":0},
+        {"num":42, "dir":0}
     ]},
     { "start":"A-gauche", "end":"3", "trajectoire":[
         {"num":5, "dir":0},
         {"num":6, "dir":0},
         {"num":8, "dir":1},
-        {"num":9, "dir":1}
+        {"num":9, "dir":1},
+        {"num":42, "dir":0}
     ]},
     { "start":"A-gauche", "end":"4", "trajectoire":[
         {"num":5, "dir":1},
@@ -58,17 +61,20 @@
     ]},
     { "start":"B-gauche", "end":"1", "trajectoire":[
         {"num":6, "dir":1},
-        {"num":8, "dir":0}
+        {"num":8, "dir":0},
+        {"num":42, "dir":0}
     ]},
     { "start":"B-gauche", "end":"2", "trajectoire":[
         {"num":6, "dir":1},
         {"num":8, "dir":1},
-        {"num":9, "dir":0}
+        {"num":9, "dir":0},
+        {"num":42, "dir":0}
     ]},
     { "start":"B-gauche", "end":"3", "trajectoire":[
         {"num":6, "dir":1},
         {"num":8, "dir":1},
-        {"num":9, "dir":1}
+        {"num":9, "dir":1},
+        {"num":42, "dir":0}
     ]},
     { "start":"B-gauche", "end":"4", "trajectoire":[
         {"num":5, "dir":0},
@@ -209,28 +215,28 @@
         {"num":21, "dir":0},
         {"num":20, "dir":1}
     ]},
-    { "start":"ROT", "end":"4", "trajectoire":[
+    { "start":"ROTONDE", "end":"4", "trajectoire":[
         {"num":24, "dir":1},
         {"num":12, "dir":0},
         {"num":11, "dir":0}
     ]},
-    { "start":"ROT", "end":"5", "trajectoire":[
+    { "start":"ROTONDE", "end":"5", "trajectoire":[
         {"num":24, "dir":1},
         {"num":12, "dir":1},
         {"num":11, "dir":0}
     ]},
-    { "start":"ROT", "end":"6", "trajectoire":[
+    { "start":"ROTONDE", "end":"6", "trajectoire":[
         {"num":22, "dir":0},
         {"num":23, "dir":0}
     ]},
-    { "start":"ROT", "end":"7", "trajectoire":[
+    { "start":"ROTONDE", "end":"7", "trajectoire":[
         {"num":22, "dir":0},
         {"num":23, "dir":1}
     ]},
-    { "start":"ROT", "end":"8", "trajectoire":[
+    { "start":"ROTONDE", "end":"8", "trajectoire":[
         {"num":22, "dir":1}
     ]},
-    { "start":"ROT", "end":"B-droite", "trajectoire":[
+    { "start":"ROTONDE", "end":"B-droite", "trajectoire":[
         {"num":20, "dir":1},
         {"num":21, "dir":1}
     ]},
@@ -238,7 +244,7 @@
         {"num":25, "dir":1},
         {"num":15, "dir":0}
     ]},
-    { "start":"GareCach1", "end":"A", "trajectoire":[
+    { "start":"GareCach1", "end":"A-droite", "trajectoire":[
         {"num":27, "dir":1},
         {"num":26, "dir":0}
     ]},
@@ -247,7 +253,7 @@
         {"num":25, "dir":0},
         {"num":15, "dir":0}
     ]},
-    { "start":"GareCach2", "end":"A", "trajectoire":[
+    { "start":"GareCach2", "end":"A-droite", "trajectoire":[
         {"num":28, "dir":1},
         {"num":27, "dir":0},
         {"num":26, "dir":0}
@@ -262,7 +268,8 @@
     ]},
     { "start":"B-gauche", "end":"B-droite", "trajectoire":[
         {"num":30, "dir":0},
-        {"num":31, "dir":0}
+        {"num":31, "dir":0},
+        {"num":44, "dir":0}
     ]},
     { "start":"B-gauche", "end":"D", "trajectoire":[
         {"num":30, "dir":0},
@@ -270,46 +277,79 @@
     ]},
     { "start":"B-droite", "end":"C", "trajectoire":[
         {"num":30, "dir":1},
-        {"num":31, "dir":0}
+        {"num":31, "dir":0},
+        {"num":44, "dir":0}
     ]},
     { "start":"C", "end":"D", "trajectoire":[
         {"num":30, "dir":1},
         {"num":31, "dir":1}
     ]},
-    { "start":"C", "end":"M1", "trajectoire":[
+    { "start":"C", "end":"ilot-1", "trajectoire":[
         {"num":40, "dir":0},
         {"num":41, "dir":0}
     ]},
-    { "start":"C", "end":"M2", "trajectoire":[
+    { "start":"C", "end":"ilot-2", "trajectoire":[
         {"num":40, "dir":1},
         {"num":41, "dir":0}
     ]},
-    { "start":"C", "end":"M3", "trajectoire":[
+    { "start":"C", "end":"ilot-3", "trajectoire":[
         {"num":40, "dir":1},
         {"num":41, "dir":1}
     ]},
-    { "start":"D", "end":"M1", "trajectoire":[
+    { "start":"D", "end":"ilot-1", "trajectoire":[
         {"num":36, "dir":1}
     ]},
-    { "start":"D", "end":"M2", "trajectoire":[
+    { "start":"D", "end":"ilot-2", "trajectoire":[
         {"num":36, "dir":0},
         {"num":37, "dir":0}
     ]},
-    { "start":"D", "end":"M3", "trajectoire":[
+    { "start":"D", "end":"ilot-3", "trajectoire":[
         {"num":36, "dir":0},
         {"num":37, "dir":1},
         {"num":38, "dir":0},
         {"num":39, "dir":0}
     ]},
-    { "start":"D", "end":"M4", "trajectoire":[
+    { "start":"D", "end":"ilot-4", "trajectoire":[
         {"num":36, "dir":0},
         {"num":37, "dir":1},
         {"num":38, "dir":0},
         {"num":39, "dir":1}
     ]},
-    { "start":"D", "end":"M5", "trajectoire":[
+    { "start":"D", "end":"ilot-5", "trajectoire":[
         {"num":36, "dir":0},
         {"num":37, "dir":1},
         {"num":38, "dir":1}
+    ]},
+    { "start":"A-droite", "end":"A-gauche", "trajectoire":[
+        {"num":43, "dir":1},
+        {"num":44, "dir":0}
+    ]},
+    { "start":"B-droite", "end":"A-gauche", "trajectoire":[
+        {"num":43, "dir":1},
+        {"num":44, "dir":1},
+        {"num":44, "dir":1}
+    ]},
+    { "start":"A-droite", "end":"GareCach4", "trajectoire":[
+        {"num":43, "dir":0},
+        {"num":44, "dir":0}
+    ]},
+    { "start":"B-droite", "end":"GareCach4", "trajectoire":[
+        {"num":43, "dir":0},
+        {"num":44, "dir":1},
+        {"num":44, "dir":1}
+    ]},
+    { "start":"GareCach4", "end":"1", "trajectoire":[
+        {"num":8, "dir":0},
+        {"num":42, "dir":1}
+    ]},
+    { "start":"GareCach4", "end":"2", "trajectoire":[
+        {"num":8, "dir":1},
+        {"num":9, "dir":0},
+        {"num":42, "dir":1}
+    ]},
+    { "start":"GareCach4", "end":"3", "trajectoire":[
+        {"num":8, "dir":1},
+        {"num":9, "dir":1},
+        {"num":42, "dir":1}
     ]}
   ]}

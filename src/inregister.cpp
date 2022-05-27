@@ -24,7 +24,7 @@ void inregister::fetch(){
     digitalWrite(this->latchPin, LOW);
     // Lecture état boutons
     this->result = 0;
-    for(int i=15; i>=0; i--){
+    for(int i=31; i>=0; i--){
         digitalWrite(this->clockPin, LOW);
         delayMicroseconds(2);
         bool res = digitalRead(this->dataPin);
@@ -35,6 +35,6 @@ void inregister::fetch(){
     }
 }
 
-unsigned int inregister::readValue(){
+unsigned long inregister::readValue(){
     return this->result;
 }
