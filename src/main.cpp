@@ -15,7 +15,7 @@
 
 #define BT_STOP               27
 #define BT_SELECT_MACHINE     16
-#define BT_OK                 17
+#define BT_ECHAP              17
 #define BT_SELECT_AIGUILLAGE  13
 #define BT_SELECT_ROTONDE     14
 #define BT_SELECT_FONCTION    15
@@ -69,7 +69,7 @@ bool itineraireDirection[10];
 unsigned short compteurItineraire;
 bool lastEtatBoutonStop = true;
 bool lastEtatBoutonSelectMachine = true;
-bool lastEtatBoutonOK = true;
+bool lastEtatBoutonEchap = true;
 bool lastEtatBoutonSelectAiguillage = true;
 bool lastEtatBoutonSelectRotonde = true;
 bool lastEtatBoutonSelectFonction = true;
@@ -77,7 +77,7 @@ bool lastEtatBoutonItineraire = true;
 bool lastEtatAU = true;
 bool BtStopPressed = false;
 bool BtSelectMachinePressed = false;
-bool BtOKPressed = false;
+bool BtEchapPressed = false;
 bool BtSelectAiguillagePressed = false;
 bool BtSelectRotondePressed = false;
 bool BtSelectFonctionPressed = false;
@@ -242,7 +242,7 @@ void updateBouton(){
   // Lecture entrées
   bool etatBoutonStop = digitalRead(BT_STOP);
   bool etatBoutonSelectMachine = digitalRead(BT_SELECT_MACHINE);
-  bool etatBoutonOK = digitalRead(BT_OK);
+  bool etatBoutonEchap = digitalRead(BT_ECHAP);
   bool etatBoutonSelectAiguillage = digitalRead(BT_SELECT_AIGUILLAGE);
   bool etatBoutonSelectRotonde = digitalRead(BT_SELECT_ROTONDE);
   bool etatBoutonSelectFonction = digitalRead(BT_SELECT_FONCTION);
@@ -250,7 +250,7 @@ void updateBouton(){
   // Initialisation One Shot
   BtStopPressed = false;
   BtSelectMachinePressed = false;
-  BtOKPressed = false;
+  BtEchapPressed = false;
   BtSelectAiguillagePressed = false;
   BtSelectRotondePressed = false;
   BtSelectFonctionPressed = false;
@@ -259,8 +259,8 @@ void updateBouton(){
   if((etatBoutonSelectMachine != lastEtatBoutonSelectMachine) && !etatBoutonSelectMachine){
     BtSelectMachinePressed = true;
   }
-  if((etatBoutonOK != lastEtatBoutonOK) && !etatBoutonOK){
-    BtOKPressed = true;
+  if((etatBoutonEchap != lastEtatBoutonEchap) && !etatBoutonEchap){
+    BtEchapPressed = true;
   }
   if((etatBoutonSelectAiguillage != lastEtatBoutonSelectAiguillage) && !etatBoutonSelectAiguillage){
     BtSelectAiguillagePressed = true;
@@ -280,7 +280,7 @@ void updateBouton(){
   // MAJ état précédent
   lastEtatBoutonStop = etatBoutonStop;
   lastEtatBoutonSelectMachine = etatBoutonSelectMachine;
-  lastEtatBoutonOK = etatBoutonOK;
+  lastEtatBoutonEchap = etatBoutonEchap;
   lastEtatBoutonSelectAiguillage = etatBoutonSelectAiguillage;
   lastEtatBoutonSelectRotonde = etatBoutonSelectRotonde;
   lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
@@ -657,7 +657,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
     
     // Passage à l'étape 10 si changement de machine
-    if(BtOKPressed || BtStopPressed){
+    if(BtEchapPressed || BtStopPressed){
       etatEcran = 10;
     }
     
@@ -692,11 +692,13 @@ void majEcran(){
 
     lastEtatEcran = etatEcran;
 
-    // Passage à l'étape 32
-    if(BtOKPressed || BtStopPressed){
+    // Passage à l'étape 32 ou 10 selon le bouton pressé
+    if(BtStopPressed){
       lv_roller_set_visible_row_count(rollerAiguillage, 1);
       lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
       etatEcran = 32;
+    } else if(BtEchapPressed){
+      etatEcran = 10;
     }
   } else if(etatEcran == 32){
     // Sélection de l'état de l'aiguillage et envoie de la commande
@@ -711,9 +713,7 @@ void majEcran(){
     }
 
     // Passage à l'étape 10 si on souhaite quitter, sinon on retourne à 31
-    if(BtOKPressed){
-      lv_roller_set_visible_row_count(rollerAiguillage, 4);
-      lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
+    if(BtEchapPressed){
       etatEcran = 10;
     } else if(BtStopPressed){
       lv_roller_set_visible_row_count(rollerAiguillage, 4);
@@ -754,7 +754,7 @@ void majEcran(){
       listeItineraire[BtItineraireNumero-1].toCharArray(buff, 10);
       lv_label_set_text(arriveLabel, buff);
       etatEcran = 42;
-    } else if(BtOKPressed){
+    } else if(BtEchapPressed){
       etatEcran = 10;
     }
   
@@ -832,7 +832,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
 
     // Passage à l'étape 10
-    if(BtOKPressed){
+    if(BtEchapPressed){
       etatEcran = 10;
     }
 
@@ -893,7 +893,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
     
     // Passage à l'étape 10
-    if(BtOKPressed){
+    if(BtEchapPressed){
       etatEcran = 10;
     }
   } else if(etatEcran == 70){
@@ -919,7 +919,7 @@ void majEcran(){
     if(etatCircuit == 1){
       etatEcran = lastEtatEcran;
       lv_msgbox_start_auto_close(mbox, 0);
-    } else if(BtOKPressed || BtStopPressed){
+    } else if(BtEchapPressed || BtStopPressed){
       // Envoie d'un reset
       etatEcran = 72;
     }
@@ -964,7 +964,7 @@ void setup()
     // Initialisation entrées
     pinMode(BT_STOP, INPUT);
     pinMode(BT_SELECT_MACHINE, INPUT_PULLUP);
-    pinMode(BT_OK, INPUT_PULLUP);
+    pinMode(BT_ECHAP, INPUT_PULLUP);
     pinMode(BT_SELECT_AIGUILLAGE, INPUT_PULLUP);
     pinMode(BT_SELECT_ROTONDE, INPUT_PULLUP);
     pinMode(BT_SELECT_FONCTION, INPUT_PULLUP);
