@@ -12,17 +12,20 @@
 #include <SD.h>
 #include <rotonde.h>
 #include <ArduinoJson.h>
+#include <Keypad.h>
 
 #define BT_STOP               27
-#define BT_SELECT_MACHINE     16
-#define BT_ECHAP              17
-#define BT_SELECT_AIGUILLAGE  13
-#define BT_SELECT_ROTONDE     14
-#define BT_SELECT_FONCTION    15
 #define LATCH_PIN             32
 #define CLOCK_PIN             33
 #define DATA_PIN              34
 #define BT_ARRET_URGENCE      4
+
+#define BT_STATE_ROTONDE BTPressed[2][2]
+#define BT_STATE_FUNCTION BTPressed[2][3]
+#define BT_STATE_ECHAP BTPressed[3][0]
+#define BT_STATE_SELECT_MACHINE BTPressed[3][1]
+#define BT_STATE_SELECT_AIGUILLAGE BTPressed[3][2]
+#define BT_STATE_ALT BTPressed[3][3]
 
 #define TIME_AIGUILLAGE_SELECT  200
 #define TIME_RESET  500
@@ -51,6 +54,25 @@ const char* password = "06338855";
 const unsigned int localPort = 21105;
 const char* ipAdress = "192.168.0.111";
 
+// Clavier 4x4
+const byte KROWS = 4; //four rows
+const byte KCOLUMNS = 4; //three columns
+const char hexaKeys[KROWS][KCOLUMNS] = {
+  {'0','1','2','3'},
+  {'4','5','6','7'},
+  {'8','9','A','B'},
+  {'C','D','E','F'}
+};
+byte rowPins[KROWS] = {13, 14, 15, 16}; //connect to the row pinouts of the keypad
+byte colPins[KCOLUMNS] = {17, 19, 4, 5}; //connect to the column pinouts of the keypad
+Keypad kpd = Keypad(makeKeymap(hexaKeys), rowPins, colPins, KROWS, KCOLUMNS); 
+bool BTPressed[KROWS][KCOLUMNS] = {
+  {0,0,0,0},
+  {0,0,0,0},
+  {0,0,0,0},
+  {0,0,0,0}
+};
+
 Z21 myZ21;
 inregister myRegister;
 
@@ -68,22 +90,12 @@ unsigned short itineraire[10];
 bool itineraireDirection[10];
 unsigned short compteurItineraire;
 bool lastEtatBoutonStop = true;
-bool lastEtatBoutonSelectMachine = true;
-bool lastEtatBoutonEchap = true;
-bool lastEtatBoutonSelectAiguillage = true;
-bool lastEtatBoutonSelectRotonde = true;
-bool lastEtatBoutonSelectFonction = true;
 bool lastEtatBoutonItineraire = true;
 bool lastEtatAU = true;
 bool BtStopPressed = false;
-bool BtSelectMachinePressed = false;
-bool BtEchapPressed = false;
-bool BtSelectAiguillagePressed = false;
-bool BtSelectRotondePressed = false;
-bool BtSelectFonctionPressed = false;
-bool BtSelectModified = false;
 bool BtItinerairePressed = false;
 bool BtAUPressed = false;
+bool BtSelectModified = false;
 unsigned long BtItineraireNumero = 0;
 DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modification du fichier
 
@@ -241,36 +253,11 @@ void updateEncoder(){
 void updateBouton(){
   // Lecture entrées
   bool etatBoutonStop = digitalRead(BT_STOP);
-  bool etatBoutonSelectMachine = digitalRead(BT_SELECT_MACHINE);
-  bool etatBoutonEchap = digitalRead(BT_ECHAP);
-  bool etatBoutonSelectAiguillage = digitalRead(BT_SELECT_AIGUILLAGE);
-  bool etatBoutonSelectRotonde = digitalRead(BT_SELECT_ROTONDE);
-  bool etatBoutonSelectFonction = digitalRead(BT_SELECT_FONCTION);
   bool etatBoutonAU = digitalRead(BT_ARRET_URGENCE);
   // Initialisation One Shot
   BtStopPressed = false;
-  BtSelectMachinePressed = false;
-  BtEchapPressed = false;
-  BtSelectAiguillagePressed = false;
-  BtSelectRotondePressed = false;
-  BtSelectFonctionPressed = false;
   BtAUPressed = false;
   // Détection front montant
-  if((etatBoutonSelectMachine != lastEtatBoutonSelectMachine) && !etatBoutonSelectMachine){
-    BtSelectMachinePressed = true;
-  }
-  if((etatBoutonEchap != lastEtatBoutonEchap) && !etatBoutonEchap){
-    BtEchapPressed = true;
-  }
-  if((etatBoutonSelectAiguillage != lastEtatBoutonSelectAiguillage) && !etatBoutonSelectAiguillage){
-    BtSelectAiguillagePressed = true;
-  }
-  if((etatBoutonSelectRotonde != lastEtatBoutonSelectRotonde) && !etatBoutonSelectRotonde){
-    BtSelectRotondePressed = true;
-  }
-  if((etatBoutonSelectFonction != lastEtatBoutonSelectFonction) && !etatBoutonSelectFonction){
-    BtSelectFonctionPressed = true;
-  }
   if((etatBoutonStop != lastEtatBoutonStop) && !etatBoutonStop){
     BtStopPressed = true;
   }
@@ -279,13 +266,18 @@ void updateBouton(){
   }
   // MAJ état précédent
   lastEtatBoutonStop = etatBoutonStop;
-  lastEtatBoutonSelectMachine = etatBoutonSelectMachine;
-  lastEtatBoutonEchap = etatBoutonEchap;
-  lastEtatBoutonSelectAiguillage = etatBoutonSelectAiguillage;
-  lastEtatBoutonSelectRotonde = etatBoutonSelectRotonde;
-  lastEtatBoutonSelectFonction = etatBoutonSelectFonction;
   lastEtatAU = etatBoutonAU;
-  // Gestion des boutons itiléraires
+  // Gestion du keypad
+  if(kpd.getKeys()){
+    for(int i=0; i<LIST_MAX; i++){
+      if(kpd.key[i].stateChanged){
+        int j = i / KROWS;
+        int k = i % KCOLUMNS;
+        BTPressed[j][k] = kpd.key[i].kstate == PRESSED;
+      }
+    }
+  }
+  // Gestion des boutons itinéraires
   bool etatBoutonItineraire = false;
   BtItineraireNumero = 0;
   int i = 0;
@@ -613,15 +605,15 @@ void majEcran(){
     lastEtatEcran = etatEcran;
 
     // Changement d'étape suivant le bouton pressé
-    if(BtSelectMachinePressed){
+    if(BT_STATE_SELECT_MACHINE){
       etatEcran = 20;
-    } else if(BtSelectAiguillagePressed){
+    } else if(BT_STATE_SELECT_AIGUILLAGE){
       etatEcran = 30;
     } else if(BtItinerairePressed){
       etatEcran = 40;
-    } else if(BtSelectRotondePressed){
+    } else if(BT_STATE_ROTONDE){
       etatEcran = 50;
-    } else if(BtSelectFonctionPressed){
+    } else if(BT_STATE_FUNCTION){
       etatEcran = 60;
     }
     
@@ -657,7 +649,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
     
     // Passage à l'étape 10 si changement de machine
-    if(BtEchapPressed || BtStopPressed){
+    if(BT_STATE_ECHAP || BtStopPressed){
       etatEcran = 10;
     }
     
@@ -697,7 +689,7 @@ void majEcran(){
       lv_roller_set_visible_row_count(rollerAiguillage, 1);
       lv_obj_align(rollerAiguillage, NULL, LV_ALIGN_CENTER, 0, 0);
       etatEcran = 32;
-    } else if(BtEchapPressed){
+    } else if(BT_STATE_ECHAP){
       etatEcran = 10;
     }
   } else if(etatEcran == 32){
@@ -713,7 +705,7 @@ void majEcran(){
     }
 
     // Passage à l'étape 10 si on souhaite quitter, sinon on retourne à 31
-    if(BtEchapPressed){
+    if(BT_STATE_ECHAP){
       etatEcran = 10;
     } else if(BtStopPressed){
       lv_roller_set_visible_row_count(rollerAiguillage, 4);
@@ -754,7 +746,7 @@ void majEcran(){
       listeItineraire[BtItineraireNumero-1].toCharArray(buff, 10);
       lv_label_set_text(arriveLabel, buff);
       etatEcran = 42;
-    } else if(BtEchapPressed){
+    } else if(BT_STATE_ECHAP){
       etatEcran = 10;
     }
   
@@ -832,7 +824,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
 
     // Passage à l'étape 10
-    if(BtEchapPressed){
+    if(BT_STATE_ECHAP){
       etatEcran = 10;
     }
 
@@ -893,7 +885,7 @@ void majEcran(){
     lastEtatEcran = etatEcran;
     
     // Passage à l'étape 10
-    if(BtEchapPressed){
+    if(BT_STATE_ECHAP){
       etatEcran = 10;
     }
   } else if(etatEcran == 70){
@@ -919,7 +911,7 @@ void majEcran(){
     if(etatCircuit == 1){
       etatEcran = lastEtatEcran;
       lv_msgbox_start_auto_close(mbox, 0);
-    } else if(BtEchapPressed || BtStopPressed){
+    } else if(BT_STATE_ECHAP || BtStopPressed){
       // Envoie d'un reset
       etatEcran = 72;
     }
@@ -963,11 +955,6 @@ void setup()
 
     // Initialisation entrées
     pinMode(BT_STOP, INPUT);
-    pinMode(BT_SELECT_MACHINE, INPUT_PULLUP);
-    pinMode(BT_ECHAP, INPUT_PULLUP);
-    pinMode(BT_SELECT_AIGUILLAGE, INPUT_PULLUP);
-    pinMode(BT_SELECT_ROTONDE, INPUT_PULLUP);
-    pinMode(BT_SELECT_FONCTION, INPUT_PULLUP);
     pinMode(BT_ARRET_URGENCE, INPUT_PULLUP);
 
     // Initialisation registres à décalage d'entré
