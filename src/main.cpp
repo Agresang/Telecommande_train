@@ -18,7 +18,7 @@
 #define LATCH_PIN             32
 #define CLOCK_PIN             33
 #define DATA_PIN              34
-#define BT_ARRET_URGENCE      4
+#define BT_ARRET_URGENCE      36
 
 #define BT_STATE_ROTONDE BTPressed[2][2]
 #define BT_STATE_FUNCTION BTPressed[2][3]
@@ -271,8 +271,10 @@ void updateBouton(){
   if(kpd.getKeys()){
     for(int i=0; i<LIST_MAX; i++){
       if(kpd.key[i].stateChanged){
-        int j = i / KROWS;
-        int k = i % KCOLUMNS;
+        char keyChar[] = {kpd.key[i].kchar,'\0'};
+        int key_int = strtol(keyChar, NULL, 16);
+        int j = key_int / KROWS;
+        int k = key_int % KCOLUMNS;
         BTPressed[j][k] = kpd.key[i].kstate == PRESSED;
       }
     }
