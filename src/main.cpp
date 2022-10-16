@@ -13,6 +13,11 @@
 #include <rotonde.h>
 #include <ArduinoJson.h>
 #include <Keypad.h>
+#include <EEPROM.h>
+
+// 1 byte est utilisé pour retenir la dernière machine sélectionnée
+#define EEPROM_SIZE 1
+#define MACHINE_NUMBER_ADRESS 0
 
 #define BT_STOP               27
 #define LATCH_PIN             32
@@ -569,6 +574,9 @@ void majEcran(){
     oldPosition = 0;
     myZ21.AskMachineInfo();
     premiereInfoMachine = 1;
+    // Sauvegarde du numéro de machine sélectionnée
+    EEPROM.write(MACHINE_NUMBER_ADRESS, numMachine);
+    EEPROM.commit();
     
     // Passage à l'étape 11
     etatEcran = 11;
@@ -1018,6 +1026,10 @@ void setup()
     encoderS.attachSingleEdge(25, 26);
     encoderS.setFilter(8000);
     encoderS.setCount(0);
+
+    // Init EEPROM
+    EEPROM.begin(EEPROM_SIZE);
+    numMachine = EEPROM.read(MACHINE_NUMBER_ADRESS);
 
     // Affichage écran acceuil
     majEcran();

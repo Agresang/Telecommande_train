@@ -44,8 +44,6 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 ## Prochaines étapes
 
-- Permettre la sélection de la vitesse dans le menu des fonctions
-- Retenir la dernière machine sélectionnée pour pouvoir la re-sélectionner automatiquement après un reboot
 - Passer la surveillance des boutons du keypad dans un programme parallèle ? (Tester au préalable combien de temps ça prend)
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages
   - Ajouter une détection si l'extension est connectée ou non. Utiliser la pin 36, nécessite une résistance pull-up
