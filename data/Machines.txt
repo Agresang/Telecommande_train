@@ -7,16 +7,23 @@ Vapeur 241P 1
 Locotract. 63873
 Vapeur 050TA
 Vapeur 241P 2
-Vapeur 232U1
-Vapeur 141TA
+Vapeur 232 U1
+Vap. 141TA Noir 1
 Autorail RGP2700
 Dies/Elec 72085
-Vapeur 141TA
+Vap. 141TA Noir 2
 Autorail Bugatti
 Rotonde
 Dies/Elec 67534
-Vapeur 230
-Vapeur 130TB
-Locotract. Brawa
+Vapeur 230 F
+Vapeur 130 TB
+Loctr. DRGWR360
 Vap. 030TU Nantes
-Vap. 141TA Bleue
+Vap. 141TA Bleu
+Vapeur 231 K
+Vapeur 141 P
+Autor. EAD X4300
+Loctrac Y8000
+Autorail X2000
+Dies/Elec 72030
+Autor. BAD X4500
