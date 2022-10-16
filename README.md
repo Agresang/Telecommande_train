@@ -27,16 +27,10 @@ Je l'ai commenté dans `User_Setup.h` (ligne 191) de la librairie TFT.
  - 32 : Latch registres à décalage
  - 33 : Clock registres à décalage
  - 34 : Data registres à décalage
- - 4 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
+ - 36 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
+ - 4,5,13,14,15,16,17,19 : Keypad
 
-## Mise à jour liste machines
-
-Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/
-
-## Prochaines étapes
-
-- Ajouter des boutons raccourcies pour les fonctions (Feux et F1 à F6) => voir fichier ES_ESP32
-  - Faire la répartition suivante
+## Disposition des touches du keypad
 
 | Feux             | F1                        | F2                           | F3                   |
 | ---------------- | ------------------------- | ---------------------------- | -------------------- |
@@ -44,7 +38,12 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 | F8               | F9                        | Rotonde (Alt. F10)           | Fonctions (Alt. F11) |
 | Echap (Alt. F12) | Select Machine (Alt. F13) | Select Aiguillage (Alt. F14) | Alternative          |
 
-- Activer/désactiver les fonctions via les touches du Keypad (juste faire le lien entre les touches et les fonctions)
+## Mise à jour liste machines
+
+Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/
+
+## Prochaines étapes
+
 - Permettre la sélection de la vitesse dans le menu des fonctions
 - Retenir la dernière machine sélectionnée pour pouvoir la re-sélectionner automatiquement après un reboot
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages

@@ -20,11 +20,11 @@
 #define DATA_PIN              34
 #define BT_ARRET_URGENCE      36
 
-#define BT_STATE_ROTONDE BTPressed[2][2]
-#define BT_STATE_FUNCTION BTPressed[2][3]
-#define BT_STATE_ECHAP BTPressed[3][0]
-#define BT_STATE_SELECT_MACHINE BTPressed[3][1]
-#define BT_STATE_SELECT_AIGUILLAGE BTPressed[3][2]
+#define BT_STATE_ROTONDE BTPressed[2][2] and not altKeyPressed
+#define BT_STATE_FUNCTION BTPressed[2][3] and not altKeyPressed
+#define BT_STATE_ECHAP BTPressed[3][0] and not altKeyPressed
+#define BT_STATE_SELECT_MACHINE BTPressed[3][1] and not altKeyPressed
+#define BT_STATE_SELECT_AIGUILLAGE BTPressed[3][2] and not altKeyPressed
 #define BT_STATE_ALT BTPressed[3][3]
 
 #define TIME_AIGUILLAGE_SELECT  200
@@ -72,6 +72,7 @@ bool BTPressed[KROWS][KCOLUMNS] = {
   {0,0,0,0},
   {0,0,0,0}
 };
+bool altKeyPressed = false;
 
 Z21 myZ21;
 inregister myRegister;
@@ -270,12 +271,16 @@ void updateBouton(){
   // Gestion du keypad
   if(kpd.getKeys()){
     for(int i=0; i<LIST_MAX; i++){
+      char keyChar[] = {kpd.key[i].kchar,'\0'};
+      int key_int = strtol(keyChar, NULL, 16);
       if(kpd.key[i].stateChanged){
-        char keyChar[] = {kpd.key[i].kchar,'\0'};
-        int key_int = strtol(keyChar, NULL, 16);
         int j = key_int / KROWS;
         int k = key_int % KCOLUMNS;
         BTPressed[j][k] = kpd.key[i].kstate == PRESSED;
+      }
+      // gestion du bouton alternatif
+      if(key_int == 15){
+        altKeyPressed = kpd.key[i].kstate == PRESSED or kpd.key[i].kstate == HOLD;
       }
     }
   }
@@ -966,7 +971,7 @@ void fonctionKeypad(){
       number = i;
     }
   }
-  if(number < 10 or (BTPressed[3][3] and number < 15)){
+  if(number < 10 or (altKeyPressed and number < 15)){
     toggleFunction(number);
   }
 }
