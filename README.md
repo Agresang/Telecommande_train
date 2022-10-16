@@ -27,7 +27,7 @@ Je l'ai commenté dans `User_Setup.h` (ligne 191) de la librairie TFT.
  - 32 : Latch registres à décalage
  - 33 : Clock registres à décalage
  - 34 : Data registres à décalage
- - 36 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
+ - 35 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
  - 4,5,13,14,15,16,17,19 : Keypad
 
 ## Disposition des touches du keypad
@@ -46,6 +46,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 
 - Permettre la sélection de la vitesse dans le menu des fonctions
 - Retenir la dernière machine sélectionnée pour pouvoir la re-sélectionner automatiquement après un reboot
+- Passer la surveillance des boutons du keypad dans un programme parallèle ? (Tester au préalable combien de temps ça prend)
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages
   - Ajouter une détection si l'extension est connectée ou non. Utiliser la pin 36, nécessite une résistance pull-up
   - Désactiver la lecture des registres si l'extension n'est pas connectée

@@ -18,7 +18,7 @@
 #define LATCH_PIN             32
 #define CLOCK_PIN             33
 #define DATA_PIN              34
-#define BT_ARRET_URGENCE      36
+#define BT_ARRET_URGENCE      35
 
 #define BT_STATE_ROTONDE BTPressed[2][2] and not altKeyPressed
 #define BT_STATE_FUNCTION BTPressed[2][3] and not altKeyPressed
