@@ -951,6 +951,26 @@ void majLVGL(void * parameter){
   }
 }
 
+void toggleFunction(int functionNumber){
+  bool functionState = myZ21.GetMachineFunctionState(functionNumber);
+  myZ21.SendMachineFunctionCommand(functionNumber, not functionState);
+}
+
+void fonctionKeypad(){
+  // Gestion des fonctions via les touches du keypad
+  int number = -1;
+  for(int i=0; i<16; i++){
+    int j = i / KROWS;
+    int k = i % KCOLUMNS;
+    if(BTPressed[j][k]){
+      number = i;
+    }
+  }
+  if(number < 10 or (BTPressed[3][3] and number < 15)){
+    toggleFunction(number);
+  }
+}
+
 void setup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -1026,6 +1046,9 @@ void loop()
 
   //Etat encodeur
   updateEncoder();
+
+  //Gestion des fonctions via les touches du keypad
+  fonctionKeypad();
 
   // Renouvellement souscription Z21
   unsigned long now = millis();
