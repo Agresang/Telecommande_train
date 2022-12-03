@@ -29,6 +29,7 @@ Je l'ai commenté dans `User_Setup.h` (ligne 191) de la librairie TFT.
  - 34 : Data registres à décalage
  - 35 : Arrêt d'urgence (trouver un bouton du style AU avec un état enfoncé permanent)
  - 4,5,13,14,15,16,17,19 : Keypad
+ - 36 : entrée analogique tension batterie
 
 ## Disposition des touches du keypad
 
@@ -45,6 +46,7 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 ## Prochaines étapes
 
 - Passer la surveillance des boutons du keypad dans un programme parallèle ? (Tester au préalable combien de temps ça prend)
+- Ajouter une batterie ainsi que la surveillance de sa tension (voir plus haut pour la pin utilisée)
 - Séparer la télécommande entre la partie centrale et le plan des aiguillages
   - Ajouter une détection si l'extension est connectée ou non. Utiliser la pin 36, nécessite une résistance pull-up
   - Désactiver la lecture des registres si l'extension n'est pas connectée

@@ -27,3 +27,5 @@ Loctrac Y8000
 Autorail X2000
 Dies/Elec 72030
 Autor. BAD X4500
+Dies/Elec 68041
+Autorail X3709
