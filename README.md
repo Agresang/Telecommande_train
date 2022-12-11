@@ -53,3 +53,5 @@ Suivre ces étapes : https://randomnerdtutorials.com/esp32-vs-code-platformio-sp
 - Correction de bugs
   - Lors de la réalisation des trajectoires il arrive que l'application reste coincé sur l'affichage de la trajectoire alors que tous les aiguillages ont été traités
   - Sur l'écrande la rotonde, le sélecteur peut entrainer un reset du microcontrôleur
+    - J'ai tout testé côté tâche parallèle, il n'y a rien à faire
+    - Tenter une autre méthode de dessein : utiliser uniquement des carés/droites de LVGL
