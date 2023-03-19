@@ -39,6 +39,7 @@
 #define TIME_ROTONDE_SELECT   500
 
 #define JSON_SIZE 16384
+#define SEUIL_BATTERIE 15
 
 // Augmentation du stack pour éviter un stack overflow dû à l'ouverture d'un gros fichier JSON
 // Voir le poste de khoih.prog : https://community.platformio.org/t/esp32-stack-configuration-reloaded/20994/4
@@ -1008,6 +1009,9 @@ void read_battery_level(){
   int sensor_level = analogRead(NIVEAU_BATTERIE);
   Serial.println(sensor_level);
   niveau_batterie = map(sensor_level, 0, 4095, 0, 100);
+  if(niveau_batterie < SEUIL_BATTERIE){
+    esp_deep_sleep_start();
+  }
 }
 
 void setup()
