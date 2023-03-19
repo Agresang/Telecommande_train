@@ -24,6 +24,7 @@
 #define CLOCK_PIN             33
 #define DATA_PIN              34
 #define BT_ARRET_URGENCE      35
+#define NIVEAU_BATTERIE       36
 
 #define BT_STATE_ROTONDE BTPressed[2][2] and not altKeyPressed
 #define BT_STATE_FUNCTION BTPressed[2][3] and not altKeyPressed
@@ -115,6 +116,8 @@ unsigned long timerAiguillage = 0;
 unsigned long timerReset = 0;
 unsigned long timerRotonde = 0;
 
+int niveau_batterie = 0;
+
 TFT_eSPI tft = TFT_eSPI(); /* TFT instance */
 static lv_disp_buf_t disp_buf;
 static lv_color_t buf[LV_HOR_RES_MAX * 10];
@@ -146,6 +149,8 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 // Variables globales affichage
 lv_obj_t * gauge1;
 lv_obj_t * speedLabel;
+lv_obj_t * battery_level_label;
+lv_obj_t * battery_level_slider;
 lv_obj_t * machineNameLabel;
 lv_obj_t * rollerMachine;
 lv_obj_t * ecranAcceuil;
@@ -385,6 +390,17 @@ void majEcran(){
     lv_label_set_text(machineNameLabel, "-");
     lv_obj_add_style(machineNameLabel, LV_OBJ_PART_MAIN, &style_medium);
     lv_label_set_align(machineNameLabel, LV_LABEL_ALIGN_CENTER);
+    // Niveau de la batterie
+    battery_level_label = lv_label_create(ecranVitesse, NULL);
+    lv_obj_align(battery_level_label, ecranVitesse, LV_ALIGN_IN_TOP_RIGHT, 30, 20);
+    lv_label_set_align(battery_level_label, LV_LABEL_ALIGN_CENTER);
+    lv_label_set_text(battery_level_label, "0");
+    lv_obj_add_style(battery_level_label, LV_OBJ_PART_MAIN, &style_small);
+    battery_level_slider = lv_slider_create(ecranVitesse, NULL);
+    lv_obj_align(battery_level_slider, ecranVitesse, LV_ALIGN_IN_TOP_LEFT, 185, 5);
+    lv_slider_set_range(battery_level_slider, 0, 100);
+    lv_slider_set_value(battery_level_slider, 0, LV_ANIM_OFF);
+    lv_obj_set_size(battery_level_slider, 50, 10);
     
     // Ecran machine
     ecranMachine = lv_obj_create(NULL, NULL);
@@ -616,6 +632,10 @@ void majEcran(){
       myZ21.SendMachineCommand();
       oldPosition = newPosition;
     }
+
+    // Niveau de la batterie
+    ecritValeur(battery_level_label, niveau_batterie);
+    lv_slider_set_value(battery_level_slider, niveau_batterie, LV_ANIM_OFF);
 
     lastEtatEcran = etatEcran;
 
@@ -984,6 +1004,12 @@ void fonctionKeypad(){
   }
 }
 
+void read_battery_level(){
+  int sensor_level = analogRead(NIVEAU_BATTERIE);
+  Serial.println(sensor_level);
+  niveau_batterie = map(sensor_level, 0, 4095, 0, 100);
+}
+
 void setup()
 {
     Serial.begin(115200); /* prepare for possible serial debug */
@@ -991,6 +1017,7 @@ void setup()
     // Initialisation entrées
     pinMode(BT_STOP, INPUT);
     pinMode(BT_ARRET_URGENCE, INPUT_PULLUP);
+    pinMode(NIVEAU_BATTERIE, INPUT);
 
     // Initialisation registres à décalage d'entré
     myRegister.Setup(LATCH_PIN, CLOCK_PIN, DATA_PIN);
@@ -1066,6 +1093,9 @@ void loop()
 
   //Gestion des fonctions via les touches du keypad
   fonctionKeypad();
+
+  //Lecture du niveau de la batterie
+  read_battery_level();
 
   // Renouvellement souscription Z21
   unsigned long now = millis();

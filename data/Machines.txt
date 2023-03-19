@@ -29,3 +29,6 @@ Dies/Elec 72030
 Autor. BAD X4500
 Dies/Elec 68041
 Autorail X3709
+Loctract 12126
+Vapeur 140C38
+060DB/65000
