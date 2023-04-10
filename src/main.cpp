@@ -151,7 +151,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 lv_obj_t * gauge1;
 lv_obj_t * speedLabel;
 lv_obj_t * battery_level_label;
-lv_obj_t * battery_level_slider;
+lv_obj_t * battery_level_bar;
 lv_obj_t * machineNameLabel;
 lv_obj_t * rollerMachine;
 lv_obj_t * ecranAcceuil;
@@ -397,11 +397,11 @@ void majEcran(){
     lv_label_set_align(battery_level_label, LV_LABEL_ALIGN_CENTER);
     lv_label_set_text(battery_level_label, "0");
     lv_obj_add_style(battery_level_label, LV_OBJ_PART_MAIN, &style_small);
-    battery_level_slider = lv_slider_create(ecranVitesse, NULL);
-    lv_obj_align(battery_level_slider, ecranVitesse, LV_ALIGN_IN_TOP_LEFT, 185, 5);
-    lv_slider_set_range(battery_level_slider, 0, 100);
-    lv_slider_set_value(battery_level_slider, 0, LV_ANIM_OFF);
-    lv_obj_set_size(battery_level_slider, 50, 10);
+    battery_level_bar = lv_bar_create(ecranVitesse, NULL);
+    lv_obj_align(battery_level_bar, ecranVitesse, LV_ALIGN_IN_TOP_LEFT, 185, 5);
+    lv_bar_set_range(battery_level_bar, 0, 100);
+    lv_bar_set_value(battery_level_bar, 0, LV_ANIM_OFF);
+    lv_obj_set_size(battery_level_bar, 50, 10);
     
     // Ecran machine
     ecranMachine = lv_obj_create(NULL, NULL);
@@ -636,7 +636,7 @@ void majEcran(){
 
     // Niveau de la batterie
     ecritValeur(battery_level_label, niveau_batterie);
-    lv_slider_set_value(battery_level_slider, niveau_batterie, LV_ANIM_OFF);
+    lv_bar_set_value(battery_level_bar, niveau_batterie, LV_ANIM_OFF);
 
     lastEtatEcran = etatEcran;
 
