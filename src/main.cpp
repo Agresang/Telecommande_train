@@ -10,7 +10,6 @@
 #include <ArduinoOTA.h>
 #include <SPIFFS.h>
 #include <SD.h>
-#include <rotonde.h>
 #include <ArduinoJson.h>
 #include <Keypad.h>
 #include <EEPROM.h>
@@ -109,8 +108,6 @@ DynamicJsonDocument doc(JSON_SIZE);  // JSON_SIZE à recalculer en cas de modifi
 
 int etatEcran = 0;
 int lastEtatEcran = 0;
-bool ecranProcessComplete = true;
-bool forceScreenUpdate = false;
 
 unsigned long timer = 0;
 unsigned long timerAiguillage = 0;
@@ -165,7 +162,13 @@ lv_obj_t * mbox;
 lv_obj_t * ecranFonction;
 lv_obj_t * btnmFonction;
 lv_obj_t * ecranRotonde;
-lv_obj_t * imgRotonde;
+lv_obj_t * canvaRotonde;
+lv_obj_t * rotatedCanvaRotonde;
+static lv_color_t cbuf[LV_CANVAS_BUF_SIZE_ALPHA_2BIT(120, 120)];
+static lv_color_t cbuf2[LV_CANVAS_BUF_SIZE_ALPHA_2BIT(120, 120)];
+// static uint8_t cbuf_tmp[LV_CANVAS_BUF_SIZE_ALPHA_2BIT(120, 120)];
+static lv_color_t cbuf_tmp[LV_CANVAS_BUF_SIZE_ALPHA_2BIT(120, 120)];
+lv_img_dsc_t img;
 lv_obj_t * line1;
 lv_obj_t * line3;
 lv_obj_t * line4;
@@ -463,12 +466,32 @@ void majEcran(){
     // Ecran rotonde
     ecranRotonde = lv_obj_create(NULL, NULL);
     lv_obj_add_style(ecranRotonde, LV_STATE_DEFAULT, &style_bg_blanc);
-    // Image
-    LV_IMG_DECLARE(rotonde);
-    imgRotonde = lv_img_create(ecranRotonde, NULL);
-    lv_img_set_src(imgRotonde, &rotonde);
-    lv_obj_align(imgRotonde, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_img_set_pivot(imgRotonde, 90, 90);
+    // Canva rotonde
+    canvaRotonde = lv_canvas_create(ecranRotonde, NULL);
+    lv_canvas_set_buffer(canvaRotonde, cbuf, 120, 120, LV_IMG_CF_ALPHA_2BIT);
+    lv_obj_align(canvaRotonde, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_canvas_fill_bg(canvaRotonde, LV_COLOR_WHITE, LV_OPA_0);
+    lv_obj_set_hidden(canvaRotonde, true);
+    img.header.cf = LV_IMG_CF_ALPHA_2BIT;
+    img.header.w = 120;
+    img.header.h = 120;
+    lv_draw_rect_dsc_t rotondeRect;
+    lv_draw_rect_dsc_t rotondeCabaneRect;
+    lv_draw_rect_dsc_init(&rotondeCabaneRect);
+    lv_draw_rect_dsc_init(&rotondeRect);
+    rotondeRect.bg_color = LV_COLOR_BLACK;
+    rotondeRect.border_color = LV_COLOR_WHITE;
+    rotondeRect.border_width = 1;
+    rotondeCabaneRect.bg_color = LV_COLOR_GRAY;
+    rotondeCabaneRect.border_color = LV_COLOR_WHITE;
+    rotondeCabaneRect.border_width = 1;
+    lv_canvas_draw_rect(canvaRotonde, 55, 0, 10, 120, &rotondeRect);
+    lv_canvas_draw_rect(canvaRotonde, 40, 10, 20, 20, &rotondeCabaneRect);
+    memcpy(cbuf_tmp, cbuf, sizeof(cbuf_tmp));
+    img.data = (const uint8_t *) cbuf_tmp;
+    rotatedCanvaRotonde = lv_canvas_create(ecranRotonde, NULL);
+    lv_canvas_set_buffer(rotatedCanvaRotonde, cbuf2, 120, 120, LV_IMG_CF_ALPHA_2BIT);
+    lv_obj_align(rotatedCanvaRotonde, NULL, LV_ALIGN_CENTER, 0, 0);
     // Lignes
     static lv_point_t line_points1[] = { {51, 80}, {16, 60} };
     line1 = lv_line_create(ecranRotonde, NULL);
@@ -832,7 +855,10 @@ void majEcran(){
   } else if(etatEcran == 50){
     // Initialisation de l'écran rotonde
     lv_scr_load(ecranRotonde);
-    lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75); // Initialisation position rotonde (on ne la connait pas bien sûr)
+    memcpy(cbuf_tmp, cbuf, sizeof(cbuf_tmp));
+    img.data = (const uint8_t *) cbuf_tmp;
+    memset(cbuf2, 0, sizeof(cbuf2));
+    lv_canvas_transform(rotatedCanvaRotonde, &img, stationRotonde[numStationRotonde]*75, LV_IMG_ZOOM_NONE, 0, 0, 60, 60, true); // Initialisation position rotonde (on ne la connait pas bien sûr)
     encoderType = false;
     encoderS.setCount(0);
     oldPosition = 0;
@@ -849,7 +875,10 @@ void majEcran(){
         numStationRotonde = 13;
       }
       oldPosition = newPosition;
-      lv_img_set_angle(imgRotonde, stationRotonde[numStationRotonde]*75);
+      memcpy(cbuf_tmp, cbuf, sizeof(cbuf_tmp));
+      img.data = (const uint8_t *) cbuf_tmp;
+      memset(cbuf2, 0, sizeof(cbuf2));
+      lv_canvas_transform(rotatedCanvaRotonde, &img, stationRotonde[numStationRotonde]*75, LV_IMG_ZOOM_NONE, 0, 0, 60, 60, true);
     }
 
     if(BtStopPressed){
@@ -974,17 +1003,6 @@ void majEcran(){
     }
 }
 
-void majLVGL(void * parameter){
-  // Synchro avec la gestion de l'écran qui tourne en parallèle
-  while (true){
-    if(not ecranProcessComplete || forceScreenUpdate){
-      lv_task_handler();
-      ecranProcessComplete = true;
-    }
-    vTaskDelay(1);
-  }
-}
-
 void toggleFunction(int functionNumber){
   bool functionState = myZ21.GetMachineFunctionState(functionNumber);
   myZ21.SendMachineFunctionCommand(functionNumber, not functionState);
@@ -1066,10 +1084,9 @@ void setup()
     majEcran();
 
     // Ajout tâche parallèle pour la gestion de l'écran
-    xTaskCreatePinnedToCore(majLVGL,"MAJ Ecran",25000,NULL,1,NULL,0);
+    //xTaskCreatePinnedToCore(majLVGL,"MAJ Ecran",25000,NULL,1,NULL,0);
 
     // Lecture fichier Trajectoires. A faire avant d'utiliser la wifi
-    forceScreenUpdate = true; // Forçage de la mise à jour de l'écran
     readTrajectoireFile();
 
     // Connexion Wifi
@@ -1078,7 +1095,6 @@ void setup()
     while (WiFi.status() != WL_CONNECTED) {
       delay(10);
     }
-    forceScreenUpdate = false; // Arrêt forçage de la mise à jour de l'écran
     ArduinoOTA.begin();
     myZ21.Setup(ipAdress, localPort);
     myZ21.SelectMachine(numMachine);
@@ -1145,13 +1161,10 @@ void loop()
   }
   
   majEcran();
-  if (ecranProcessComplete && (etatEcran >= 50 && etatEcran < 60)){
-    // Mise à jour de l'écran dans une tâche parallèle si on est dans l'affichage de la rotonde
-    ecranProcessComplete = false;
-  } else if(etatEcran < 50 || etatEcran >= 60){
-    // Mise à jour de l'écran lorsque l'on n'est pas dans l'écran de la rotonde
-    lv_task_handler();
-  }
+  
+  lv_task_handler();
+
+  vTaskDelay(1);
 
   ArduinoOTA.handle();
 }
